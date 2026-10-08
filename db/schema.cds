@@ -43,6 +43,4 @@ entity EmployeeCertifications : cuid, managed {
 
     virtual daysUntilExpiry   : Integer;
     virtual expiryCriticality : Integer;
-
-
 }
