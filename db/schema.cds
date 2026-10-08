@@ -17,10 +17,6 @@ entity Certifications : cuid, managed {
     code        : String(20)  @mandatory;
     name        : String(100) @mandatory;
     issuer      : String(50);
-    validMonths : Integer     @assert.range: [
-        1,
-        12
-    ];
 }
 
 entity Employees : cuid, managed {

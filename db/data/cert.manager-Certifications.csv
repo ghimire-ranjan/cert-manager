@@ -1,11 +1,11 @@
-ID,code,name,issuer,validMonths
-c0000000-0000-0000-0000-000000000001,C_CPE,SAP Certified - Backend Developer - SAP Cloud Application Programming Model,SAP,12
-c0000000-0000-0000-0000-000000000002,C_FIORD,SAP Certified - SAP Fiori Application Developer,SAP,12
-c0000000-0000-0000-0000-000000000003,C_ABAPD,SAP Certified - Back-End Developer - ABAP Cloud,SAP,12
-c0000000-0000-0000-0000-000000000004,C_SAC,SAP Certified - Data Analyst - SAP Analytics Cloud,SAP,12
-c0000000-0000-0000-0000-000000000005,C_CPI,SAP Certified - Integration Developer,SAP,12
-c0000000-0000-0000-0000-000000000006,AZ-900,Microsoft Azure Fundamentals,Microsoft,12
-c0000000-0000-0000-0000-000000000007,AZ-204,Microsoft Azure Developer Associate,Microsoft,12
-c0000000-0000-0000-0000-000000000008,CLF-C02,AWS Certified Cloud Practitioner,AWS,12
-c0000000-0000-0000-0000-000000000009,PSM-I,Professional Scrum Master I,Scrum.org,12
-c0000000-0000-0000-0000-000000000010,SEC-101,Secure Coding Fundamentals,Internal,6
+ID,code,name,issuer
+c0000000-0000-0000-0000-000000000001,C_CPE,SAP Certified - Backend Developer - SAP Cloud Application Programming Model,SAP
+c0000000-0000-0000-0000-000000000002,C_FIORD,SAP Certified - SAP Fiori Application Developer,SAP
+c0000000-0000-0000-0000-000000000003,C_ABAPD,SAP Certified - Back-End Developer - ABAP Cloud,SAP
+c0000000-0000-0000-0000-000000000004,C_SAC,SAP Certified - Data Analyst - SAP Analytics Cloud,SAP
+c0000000-0000-0000-0000-000000000005,C_CPI,SAP Certified - Integration Developer,SAP
+c0000000-0000-0000-0000-000000000006,AZ-900,Microsoft Azure Fundamentals,Microsoft
+c0000000-0000-0000-0000-000000000007,AZ-204,Microsoft Azure Developer Associate,Microsoft
+c0000000-0000-0000-0000-000000000008,CLF-C02,AWS Certified Cloud Practitioner,AWS
+c0000000-0000-0000-0000-000000000009,PSM-I,Professional Scrum Master I,Scrum.org
+c0000000-0000-0000-0000-000000000010,SEC-101,Secure Coding Fundamentals,Internal
