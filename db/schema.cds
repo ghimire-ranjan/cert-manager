@@ -14,9 +14,9 @@ type Status : String(20) enum {
 }
 
 entity Certifications : cuid, managed {
-    code        : String(20)  @mandatory;
-    name        : String(100) @mandatory;
-    issuer      : String(50);
+    code   : String(20)  @mandatory;
+    name   : String(100) @mandatory;
+    issuer : String(50);
 }
 
 entity Employees : cuid, managed {
@@ -33,6 +33,9 @@ entity EmployeeCertifications : cuid, managed {
     certificate               : Association to Certifications @mandatory;
     earnedOn                  : Date;
     plannedFor                : Date;
+    isEarned                  : Boolean = (
+        earnedOn is not null
+    );
     validUntil                : Date;
     evidenceUrl               : String(500)                   @assert.format: '^https://';
     status                    : Status default 'Planned'      @assert.range;
