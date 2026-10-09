@@ -2,35 +2,17 @@ using CertService as service from '../../srv/cert-service';
 
 annotate service.EmployeeCertifications with @(
     UI.LineItem       : [
-        {
-            Value: certificate.code,
-            Label: '{i18n>Certificate}'
-        },
-        {
-            Value: certificate.name,
-            Label: '{i18n>Name}'
-        },
-        {
-            Value: employee.name,
-            Label: '{i18n>Employee}'
-        },
-        {
-            Value: status,
-            Label: '{i18n>Status}'
-        },
-        {
-            Value: plannedFor,
-            Label: '{i18n>PlannedFor}'
-        },
-        {
-            Value: validUntil,
-            Label: '{i18n>ValidUntil}'
-        },
+        {Value: certificate.code},
+        {Value: certificate.name},
+        {Value: employee.name},
+        {Value: status},
+        {Value: plannedFor},
+        {Value: validUntil},
         {
             Value      : daysUntilExpiry,
-            Label      : '{i18n>DaysLeft}',
             Criticality: expiryCriticality
         },
+
     ],
 
     UI.SelectionFields: [
@@ -39,15 +21,25 @@ annotate service.EmployeeCertifications with @(
         isEarned,
     ],
 );
-annotate service.EmployeeCertifications with {
-    isEarned @Common.Label : '{i18n>IsEarned}'
-};
 
 annotate service.EmployeeCertifications with {
-    validUntil @Common.Label : '{i18n>ValidUntil}'
+    certificate     @Common.Label: '{i18n>Certificate}';
+    employee        @Common.Label: '{i18n>Employee}';
+    status          @Common.Label: '{i18n>Status}';
+    earnedOn        @Common.Label: '{i18n>EarnedOn}';
+    plannedFor      @Common.Label: '{i18n>PlannedFor}';
+    validUntil      @Common.Label: '{i18n>ValidUntil}';
+    isEarned        @Common.Label: '{i18n>IsEarned}';
+    evidenceUrl     @Common.Label: '{i18n>EvidenceUrl}';
+    daysUntilExpiry @Common.Label: '{i18n>DaysLeft}';
 };
 
-annotate service.EmployeeCertifications with {
-    status @Common.Label : '{i18n>Status}'
+annotate service.Certifications with {
+    code   @Common.Label: '{i18n>CertCode}';
+    name   @Common.Label: '{i18n>CertName}';
+    issuer @Common.Label: '{i18n>Issuer}';
 };
 
+annotate service.Employees with {
+    name @Common.Label: '{i18n>EmployeeName}';
+};
