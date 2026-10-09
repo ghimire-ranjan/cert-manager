@@ -25,16 +25,33 @@ function applyRules(req, data) {
 
 module.exports = class CertService extends cds.ApplicationService {
   init() {
-    const { EmployeeCertifications } = this.entities;
+    const { EmployeeCertifications, Employees } = this.entities;
 
-    this.before("CREATE", EmployeeCertifications, (req) => {
+    this.before("CREATE", EmployeeCertifications, async (req) => {
+      if (!req.user.is("admin")) {
+        const self = await SELECT.one
+          .from(Employees)
+          .where({ userID: req.user.id });
+        if (!self)
+          return req.error(403, `No employee record for user '${req.user.id}'`);
+        req.data.employee_ID = self.ID;
+      }
       applyRules(req, req.data);
     });
 
     this.before("UPDATE", EmployeeCertifications, async (req) => {
       const stored = await SELECT.one.from(req.subject);
+      if (
+        !req.user.is("admin") &&
+        req.data.employee_ID &&
+        req.data.employee_ID !== stored.employee_ID
+      ) {
+        return req.error(
+          403,
+          "You can't move a certification to another employee",
+        );
+      }
       const merged = { ...stored, ...req.data };
-      console.log(req)
       applyRules(req, merged);
       req.data.validUntil = merged.validUntil;
       req.data.status = merged.status;

@@ -11,5 +11,38 @@
   "scripts": {
     "start": "cds-serve"
   },
-  "private": true
+  "private": true,
+  "cds": {
+    "requires": {
+      "auth": {
+        "kind": "mocked",
+        "users": {
+          "chris": {
+            "password": "chris",
+            "roles": [
+              "admin"
+            ]
+          },
+          "dan": {
+            "password": "dan"
+          },
+          "ranjan": {
+            "password": "ranjan"
+          },
+          "erik": {
+            "password": "erik"
+          },
+          "alice": false,
+          "bob": false,
+          "carol": false,
+          "dave": false,
+          "erin": false,
+          "fred": false,
+          "me": false,
+          "yves": false,
+          "*": false
+        }
+      }
+    }
+  }
 }
