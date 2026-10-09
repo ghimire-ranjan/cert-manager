@@ -67,6 +67,15 @@ module.exports = class CertService extends cds.ApplicationService {
       }
     });
 
+        // Virtual fields are calculated from validUntil, so always read it
+    this.before("READ", EmployeeCertifications, (req) => {
+      const columns = req.query.SELECT.columns;
+      if (columns && !columns.some((c) => c.ref?.[0] === "validUntil")) {
+        columns.push({ ref: ["validUntil"] });
+      }
+    });
+
+
     return super.init();
   }
 };
