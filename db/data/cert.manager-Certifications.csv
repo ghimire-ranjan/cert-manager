@@ -1,11 +1,11 @@
 ID,code,name,issuer
-c0000000-0000-0000-0000-000000000001,C_CPE,SAP Certified - Backend Developer - SAP Cloud Application Programming Model,SAP
-c0000000-0000-0000-0000-000000000002,C_FIORD,SAP Certified - SAP Fiori Application Developer,SAP
-c0000000-0000-0000-0000-000000000003,C_ABAPD,SAP Certified - Back-End Developer - ABAP Cloud,SAP
-c0000000-0000-0000-0000-000000000004,C_SAC,SAP Certified - Data Analyst - SAP Analytics Cloud,SAP
-c0000000-0000-0000-0000-000000000005,C_CPI,SAP Certified - Integration Developer,SAP
-c0000000-0000-0000-0000-000000000006,AZ-900,Microsoft Azure Fundamentals,Microsoft
-c0000000-0000-0000-0000-000000000007,AZ-204,Microsoft Azure Developer Associate,Microsoft
-c0000000-0000-0000-0000-000000000008,CLF-C02,AWS Certified Cloud Practitioner,AWS
-c0000000-0000-0000-0000-000000000009,PSM-I,Professional Scrum Master I,Scrum.org
-c0000000-0000-0000-0000-000000000010,SEC-101,Secure Coding Fundamentals,Internal
+c0000000-0000-0000-0000-000000000001,C_CPE,SAP Certified Associate - Backend Developer - SAP Cloud Application Programming Model,SAP
+c0000000-0000-0000-0000-000000000002,C_FIORD,SAP Certified Associate - SAP Fiori Application Developer,SAP
+c0000000-0000-0000-0000-000000000003,C_ABAPD,SAP Certified Associate - Back-End Developer - ABAP Cloud,SAP
+c0000000-0000-0000-0000-000000000004,C_SAC,SAP Certified Associate - Data Analyst - SAP Analytics Cloud,SAP
+c0000000-0000-0000-0000-000000000005,C_CPI,SAP Certified Associate - Developer - SAP Integration Suite,SAP
+c0000000-0000-0000-0000-000000000006,C_LCNC,SAP Certified Associate - Low-Code/No-Code Developer - SAP Build,SAP
+c0000000-0000-0000-0000-000000000007,C_ADBTP,SAP Certified Associate - SAP BTP Administrator,SAP
+c0000000-0000-0000-0000-000000000008,C_AIG,SAP Certified Associate - SAP Generative AI Developer,SAP
+c0000000-0000-0000-0000-000000000009,C_BDC,SAP Certified Associate - SAP Business Data Cloud,SAP
+c0000000-0000-0000-0000-000000000010,C_RISE,SAP Certified Associate - RISE with SAP Methodology and Experience,SAP

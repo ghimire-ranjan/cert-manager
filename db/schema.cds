@@ -36,10 +36,10 @@ entity EmployeeCertifications : cuid, managed {
     isEarned                  : Boolean = (
         earnedOn is not null
     );
-    validUntil                : Date;
+    validUntil                : Date                          @readonly;
     evidenceUrl               : String(500)                   @assert.format: '^https://';
     status                    : Status default 'Planned'      @assert.range;
 
-    virtual daysUntilExpiry   : Integer;
-    virtual expiryCriticality : Integer;
+    virtual daysUntilExpiry   : Integer                       @readonly;
+    virtual expiryCriticality : Integer                       @readonly;
 }

@@ -15,10 +15,10 @@ function applyRules(req, data) {
     data.validUntil = null;
     if (!data.status) data.status = "Planned";
     if (!["Planned", "LearningJourney"].includes(data.status)) {
-      return req.error(400, `Status '${data.status}' needs an earnedOn date`);
+      return req.error(400, `Status '${data.status}' needs an earnedOn date`, "earnedOn");
     }
     if (!data.plannedFor) {
-      return req.error(400, `Status '${data.status}' needs a plannedFor date`);
+      return req.error(400, `Status '${data.status}' needs a plannedFor date`, "plannedFor");
     }
   }
 }
@@ -49,6 +49,7 @@ module.exports = class CertService extends cds.ApplicationService {
         return req.error(
           403,
           "You can't move a certification to another employee",
+          "employee_ID",
         );
       }
       const merged = { ...stored, ...req.data };
@@ -67,7 +68,7 @@ module.exports = class CertService extends cds.ApplicationService {
       }
     });
 
-        // Virtual fields are calculated from validUntil, so always read it
+    // Virtual fields are calculated from validUntil, so always read it
     this.before("READ", EmployeeCertifications, (req) => {
       const columns = req.query.SELECT.columns;
       if (columns && !columns.some((c) => c.ref?.[0] === "validUntil")) {
