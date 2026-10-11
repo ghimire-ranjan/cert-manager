@@ -6,11 +6,15 @@ const {
   addOneYear,
 } = require("./lib/expiry.js");
 
+
+// The set of statuses that only admins can set
+const ADMIN_SET = ["Verified", "Rejected"];
+
 // Server-side rules for one certification record (used by CREATE and UPDATE)
 function applyRules(req, data) {
   if (data.earnedOn) {
     data.validUntil = addOneYear(data.earnedOn);
-    data.status = "Pending";
+    data.status = ADMIN_SET.includes(stored?.status) ? stored.status : "Pending";
   } else {
     data.validUntil = null;
     if (!data.status) data.status = "Planned";
@@ -53,7 +57,7 @@ module.exports = class CertService extends cds.ApplicationService {
         );
       }
       const merged = { ...stored, ...req.data };
-      applyRules(req, merged);
+      applyRules(req, merged, stored);
       req.data.validUntil = merged.validUntil;
       req.data.status = merged.status;
     });
