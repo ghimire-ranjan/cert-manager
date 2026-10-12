@@ -1,3 +1,4 @@
+using from './labels';
 
 using from './certifications/annotations';
 
