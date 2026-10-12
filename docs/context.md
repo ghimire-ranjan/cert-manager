@@ -155,6 +155,7 @@ The OData service runs at `http://localhost:4004/odata/v4/cert/`.
 | Catalogue is SAP-only, with "SAP Certified Associate - ..." names | Non-SAP certifications broke the 12-month rule; the names match current SAP naming |
 | Labels via `@Common.Label` + i18n, not inside `UI.LineItem` | One label per field, reused by the table, filter and object page |
 | Labels live on the database entities (`app/labels.cds`), not on a service | Every service built on the entities inherits them, so both apps share one set |
+| Action buttons use `@Core.OperationAvailable` with `$self.status`, and the server checks again | The UI only offers moves that are allowed; the server still blocks direct API calls |
 | Error messages name the field (`req.error(400, msg, "earnedOn")`) | Fiori highlights the wrong field in red |
 | Approve / reject / revoke go in a separate `AdminService` (admin only) | Keeps admin-only things out of the employee app |
 | One audience per service: admin apps on `AdminService`, a future manager app on its own `TeamService` | The UI shows the same buttons to every user of a service, so mixing roles shows buttons that fail with 403 |

@@ -27,6 +27,10 @@ Branch `story/approvals-app` (from `story/admin-service`).
   New i18n texts `Approve`, `Reject`, `Revoke`, `ReviewSection`. All three buttons always
   show; a wrong-status click gets the 400 message from `admin-service.js`.
 - `CLAUDE.md`: Claude may also edit i18n `.properties` text files when Ranjan asks.
+- **8c+** (13 Oct) Buttons follow the status: `@Core.OperationAvailable` on each action.
+  Pending -> Approve, Reject; Verified/Rejected -> Revoke; Planned/LearningJourney ->
+  none. Uses `$self.status` (`in.status` does not compile: `in` is a reserved word). The
+  server check in `admin-service.js` stays as the safety net.
 
 ## 12 Oct 2026: step 7, AdminService and approval flow
 

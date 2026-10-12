@@ -40,8 +40,8 @@ Branch `story/approvals-app`.
 - [x] **8a** Generate the app (`app/approvals`, on AdminService), clear the generated
       annotations.
 - [x] **8b** Table columns, filter bar, labels (share labels with the first app).
-- [x] **8c** Object page with Approve / Reject / Revoke buttons. (Buttons always show;
-      hiding the ones that don't fit the status is still open.)
+- [x] **8c** Object page with Approve / Reject / Revoke buttons, enabled by status
+      (`@Core.OperationAvailable`, done 13 Oct).
 - [ ] **8d** Tabs All / Pending / Verified / Rejected.
 - [ ] **8e** "Days left" in AdminService (the calculation lives only in
       `cert-service.js` today).
