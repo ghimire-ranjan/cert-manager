@@ -71,4 +71,5 @@ These were spotted and left alone on purpose.
 | `@mandatory` on `employee` fires before the CREATE handler fills in `employee_ID` | CAP runs checks in this order. Ask a senior before working around it. Confirmed 12 Oct: a normal user who leaves out `employee_ID` gets `400 ASSERT_MANDATORY` on `employee_ID`. This matters for the "create" button in the Fiori app. |
 | Comment in `srv/lib/expiry.js` saying "12 months is a scope decision" | Small; do it next time that file is touched. |
 | Reject reason (e.g. a `rejectionReason` field, required on Reject) | Decided 12 Oct: not now. |
+| Server warning: action `reject` clashes with CAP's built-in `reject` method | Harmless: the action works over HTTP (tested). CAP only skips creating a typed JS shortcut. Renaming (e.g. `rejectRecord`) would silence it, but changes the button and URL. |
 | "My Team" app for managers: read-only, direct reports, `Verified` only, on its own `TeamService` | Decided 12 Oct: not now. Keep admin and manager apps separate so no buttons need hiding. |
