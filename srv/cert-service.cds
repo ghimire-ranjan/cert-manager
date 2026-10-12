@@ -33,21 +33,31 @@ service CertService {
         {
             grant: [
                 'READ',
-                'CREATE',
-                'UPDATE'
+                'CREATE'
             ],
             to   : 'authenticated-user',
             where: 'employee.userID = $user'
         },
+
+        //only allow edit to certain statues 
+        {
+            grant: 'UPDATE',
+            to   : 'authenticated-user',
+            where: 'employee.userID = $user and (status = ''Planned'' or status = ''LearningJourney'' or status = ''Pending'')'
+
+        },
+
+        //only allow manger to read except with status reject
+    
         {
             grant: 'READ',
             to   : 'authenticated-user',
-            where: 'employee.manager.userID = $user'
+            where: 'employee.manager.userID = $user and status <> ''Rejected'''
         },
         {
             grant: 'DELETE',
             to   : 'authenticated-user',
-            where: 'employee.userID = $user and (status = ''Planned'' or status = ''LearningJourney'')'
+            where: 'employee.userID = $user and (status = ''Planned'' or status = ''LearningJourney''  or status = ''Pending'')'
         },
         {
             grant: '*',
