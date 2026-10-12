@@ -35,7 +35,17 @@ can do what).
 
 ### Step 8: Approvals app (admin)
 
-- [ ] Fiori elements app on AdminService, tabs All / Pending / Verified / Rejected
+Branch `story/approvals-app`.
+
+- [x] **8a** Generate the app (`app/approvals`, on AdminService), clear the generated
+      annotations.
+- [ ] **8b** Table columns, filter bar, labels (share labels with the first app).
+- [ ] **8c** Approve / Reject / Revoke buttons.
+- [ ] **8d** Tabs All / Pending / Verified / Rejected.
+- [ ] **8e** "Days left" in AdminService (the calculation lives only in
+      `cert-service.js` today).
+
+Original goal: Fiori elements app on AdminService, tabs All / Pending / Verified / Rejected
       (`UI.SelectionPresentationVariant`), Approve / Reject / Revoke buttons.
       Annotations only, no JavaScript.
 

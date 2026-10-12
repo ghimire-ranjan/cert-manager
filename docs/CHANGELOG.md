@@ -10,7 +10,16 @@ step, and start a new empty Unreleased section on top.
 
 ## Unreleased
 
-(nothing yet)
+Branch `story/approvals-app` (from `story/admin-service`).
+
+- **8a** Approvals app generated with Fiori tools 1.25.0 in `app/approvals`: List Report
+  V4 on `AdminService`, main entity `EmployeeCertifications`, no virtual endpoints (real
+  `webapp/index.html`, like the first app). Generated annotations cleared, as in step 5.
+  Adds `watch-approvals` script and `app/approvals` to `sapux` in `package.json`.
+- **8b part 1** Labels moved from `app/certifications/annotations.cds` (on CertService)
+  to new `app/labels.cds` (on the `cert.manager.*` database entities), loaded from
+  `app/services.cds`. Both services now get the same 15 labels without copying them.
+  Checked: CertService `$metadata` identical before and after.
 
 ## 12 Oct 2026: step 7, AdminService and approval flow
 
@@ -18,13 +27,14 @@ Branch `story/admin-service` (from `fixes`).
 
 | Commit | Change | Why |
 | --- | --- | --- |
-| (docs commit) | Project docs: `CLAUDE.md`, `docs/context.md`, `docs/tasks/todo.md`; changelog moved to `docs/` and back-filled to the first commit. `CLAUDE.md` rule: Claude writes docs only, Ranjan writes all code | New sessions can pick up the project; all docs in one place |
-| (docs commit) | Step 7 design agreed: Approve / Reject / Revoke, AdminService, admin-only Approvals and Employees apps, employee edit lock, managers don't see `Rejected` | Recorded in `docs/context.md` and `docs/tasks/todo.md` |
+| `fe05d5c` | Project docs: `CLAUDE.md`, `docs/context.md`, `docs/tasks/todo.md`; changelog moved to `docs/` and back-filled to the first commit. `CLAUDE.md` rule: Claude writes docs only, Ranjan writes all code | New sessions can pick up the project; all docs in one place |
+| `fe05d5c` | Step 7 design agreed: Approve / Reject / Revoke, AdminService, admin-only Approvals and Employees apps, employee edit lock, managers don't see `Rejected` | Recorded in `docs/context.md` and `docs/tasks/todo.md` |
 | `11680f4` | **7c** `test/admin.http`: 9 REST Client requests replaying the approval story. Run in order after a fresh `npx cds watch` | Repeatable manual test anyone can click through |
 | `5f6ab16` | **7b** `srv/admin-service.js`: one `changeStatus` helper for `approve` (Pending -> Verified), `reject` (Pending -> Rejected), `revoke` (Verified/Rejected -> Pending). Wrong status 400, unknown ID 404 | Admin decisions with a fixed set of allowed moves |
 | `5f6ab16` | **7b** `srv/admin-service.cds`: `AdminService` at `/odata/v4/admin`, admin only. `Employees` editable; `Certifications`, `EmployeeCertifications` `@readonly`; bound actions `approve`, `reject`, `revoke` | Keeps admin-only features out of the employee app. Tested: no login 401, non-admin 403, direct edit 405 |
 | `60261d2` | **7a** `@restrict`: `UPDATE` only while `Planned`, `LearningJourney` or `Pending`; manager `READ` skips `Rejected` | Employees could change dates on approved records without review. Tested: employee edit of Verified/Rejected 403, admin still edits |
 | `efeee13` | **6d** `applyRules(req, data, stored)` now receives `stored` | Saving with an `earnedOn` date threw `ReferenceError: stored is not defined` |
+
 ## 12 Oct 2026: fixes after step 6
 
 Branch `fixes`.

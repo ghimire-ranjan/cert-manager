@@ -133,8 +133,11 @@ Managers do not use AdminService. A read-only "My Team" app for managers is park
 | `srv/lib/expiry.js` | Date helpers: `today`, `addOneYear`, `daysUntil`, `criticality` |
 | `app/certifications/annotations.cds` | Fiori UI: table columns, filter bar, object page |
 | `app/certifications/webapp/` | Generated Fiori app (`manifest.json` etc.). Usually no need to edit. |
-| `app/services.cds` | Pulls the UI annotations into the build |
-| `_i18n/i18n.properties` | All UI labels (texts) |
+| `app/approvals/annotations.cds` | Fiori UI for the admin **Approvals** app (on AdminService) |
+| `app/approvals/webapp/` | Generated Approvals app. Open at `/approvals/webapp/index.html` |
+| `app/labels.cds` | Field labels (`@Common.Label`) on the database entities, shared by every service and app |
+| `app/services.cds` | Pulls the labels and the UI annotations of both apps into the build |
+| `_i18n/i18n.properties` | All UI texts. Label keys used by `app/labels.cds` live here |
 | `package.json` | Dependencies, scripts, mocked users |
 | `test/admin.http` | Manual API tests (REST Client extension). Run requests 1-9 in order after starting the server |
 | `docs/CHANGELOG.md` | Every change, newest first |
@@ -151,6 +154,7 @@ The OData service runs at `http://localhost:4004/odata/v4/cert/`.
 | The READ handler always fetches `validUntil` | Without it, days left is empty when the UI does not ask for that column |
 | Catalogue is SAP-only, with "SAP Certified Associate - ..." names | Non-SAP certifications broke the 12-month rule; the names match current SAP naming |
 | Labels via `@Common.Label` + i18n, not inside `UI.LineItem` | One label per field, reused by the table, filter and object page |
+| Labels live on the database entities (`app/labels.cds`), not on a service | Every service built on the entities inherits them, so both apps share one set |
 | Error messages name the field (`req.error(400, msg, "earnedOn")`) | Fiori highlights the wrong field in red |
 | Approve / reject / revoke go in a separate `AdminService` (admin only) | Keeps admin-only things out of the employee app |
 | One audience per service: admin apps on `AdminService`, a future manager app on its own `TeamService` | The UI shows the same buttons to every user of a service, so mixing roles shows buttons that fail with 403 |
@@ -160,7 +164,12 @@ The OData service runs at `http://localhost:4004/odata/v4/cert/`.
 ## Git
 
 - Remote: `https://github.com/ghimire-ranjan/cert-manager.git`
-- `main`: work up to step 5d (9 Oct). `fixes`: steps 6a onwards (current work).
+- `main` on GitHub: up to step 5d (9 Oct). Local `main` is at step 6 but not pushed.
+- `fixes`: step 6 (6a-6c and the first changelog).
+- `story/admin-service` (from `fixes`): step 7, AdminService + docs. Pushed, finished.
+- `story/approvals-app` (from `story/admin-service`): step 8, the Approvals Fiori app.
+  Current work.
+- New work goes on a `story/<short-name>` branch.
 - Commit messages follow the step numbers: `1`, `2`, `3a`, `3b` ... `6c`.
 - Pushing needs the `ghimire-ranjan` GitHub account. The `ranjan-ghimire` work account gets
   a 403 error.
