@@ -12,7 +12,8 @@
   },
   "scripts": {
     "start": "cds-serve",
-    "watch-certifications": "cds watch --open certifications/index.html?sap-ui-xx-viewCache=false --livereload false"
+    "watch-certifications": "cds watch --open certifications/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-approvals": "cds watch --open approvals/index.html?sap-ui-xx-viewCache=false --livereload false"
   },
   "private": true,
   "cds": {
@@ -52,6 +53,7 @@
     "app/*"
   ],
   "sapux": [
-    "app/certifications"
+    "app/certifications",
+    "app/approvals"
   ]
 }
