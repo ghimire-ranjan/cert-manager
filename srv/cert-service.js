@@ -11,7 +11,7 @@ const {
 const ADMIN_SET = ["Verified", "Rejected"];
 
 // Server-side rules for one certification record (used by CREATE and UPDATE)
-function applyRules(req, data) {
+function applyRules(req, data, stored) {
   if (data.earnedOn) {
     data.validUntil = addOneYear(data.earnedOn);
     data.status = ADMIN_SET.includes(stored?.status) ? stored.status : "Pending";
