@@ -67,3 +67,13 @@ annotate service.EmployeeCertifications with @(
         },
     ]}
 );
+
+
+
+// Only offer the actions that fit the record's current status
+annotate service.EmployeeCertifications with actions {
+    approve @Core.OperationAvailable: ($self.status = 'Pending');
+    reject  @Core.OperationAvailable: ($self.status = 'Pending');
+    revoke  @Core.OperationAvailable: ($self.status = 'Verified' or $self.status = 'Rejected');
+};
+
