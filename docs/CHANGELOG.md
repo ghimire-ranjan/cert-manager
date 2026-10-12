@@ -10,13 +10,21 @@ step, and start a new empty Unreleased section on top.
 
 ## Unreleased
 
-- Project docs added: `CLAUDE.md`, `docs/context.md`, `docs/tasks/todo.md`. The changelog
-  moved to `docs/` and now covers the full history.
-- Rule added to `CLAUDE.md`: Claude writes docs only; Ranjan writes all code.
-- Fixed: `applyRules(req, data, stored)` now receives `stored`. Saving a record with an
-  `earnedOn` date threw `ReferenceError: stored is not defined`. Tested: new record saves
-  as `Pending`; editing a `Verified` record keeps it `Verified`.
+(nothing yet)
 
+## 12 Oct 2026: step 7, AdminService and approval flow
+
+Branch `story/admin-service` (from `fixes`).
+
+| Commit | Change | Why |
+| --- | --- | --- |
+| (docs commit) | Project docs: `CLAUDE.md`, `docs/context.md`, `docs/tasks/todo.md`; changelog moved to `docs/` and back-filled to the first commit. `CLAUDE.md` rule: Claude writes docs only, Ranjan writes all code | New sessions can pick up the project; all docs in one place |
+| (docs commit) | Step 7 design agreed: Approve / Reject / Revoke, AdminService, admin-only Approvals and Employees apps, employee edit lock, managers don't see `Rejected` | Recorded in `docs/context.md` and `docs/tasks/todo.md` |
+| `11680f4` | **7c** `test/admin.http`: 9 REST Client requests replaying the approval story. Run in order after a fresh `npx cds watch` | Repeatable manual test anyone can click through |
+| `5f6ab16` | **7b** `srv/admin-service.js`: one `changeStatus` helper for `approve` (Pending -> Verified), `reject` (Pending -> Rejected), `revoke` (Verified/Rejected -> Pending). Wrong status 400, unknown ID 404 | Admin decisions with a fixed set of allowed moves |
+| `5f6ab16` | **7b** `srv/admin-service.cds`: `AdminService` at `/odata/v4/admin`, admin only. `Employees` editable; `Certifications`, `EmployeeCertifications` `@readonly`; bound actions `approve`, `reject`, `revoke` | Keeps admin-only features out of the employee app. Tested: no login 401, non-admin 403, direct edit 405 |
+| `60261d2` | **7a** `@restrict`: `UPDATE` only while `Planned`, `LearningJourney` or `Pending`; manager `READ` skips `Rejected` | Employees could change dates on approved records without review. Tested: employee edit of Verified/Rejected 403, admin still edits |
+| `efeee13` | **6d** `applyRules(req, data, stored)` now receives `stored` | Saving with an `earnedOn` date threw `ReferenceError: stored is not defined` |
 ## 12 Oct 2026: fixes after step 6
 
 Branch `fixes`.
@@ -24,7 +32,7 @@ Branch `fixes`.
 | Commit | Change | Why |
 | --- | --- | --- |
 | `6a3c2a7` | First version of this changelog | Record of the step 6 work |
-| `f0e8f7f` | `applyRules` keeps a `Verified` or `Rejected` status instead of resetting it to `Pending` | Editing an approved record would quietly un-approve it. **Not finished: it breaks saving, see [tasks/todo.md](tasks/todo.md).** |
+| `f0e8f7f` | `applyRules` keeps a `Verified` or `Rejected` status instead of resetting it to `Pending` | Editing an approved record would quietly un-approve it. Broke saving until fixed in `efeee13` (6d). |
 
 ## 10 Oct 2026: step 6, clean-up and object page
 
