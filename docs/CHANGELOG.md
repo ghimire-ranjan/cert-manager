@@ -20,6 +20,13 @@ Branch `story/approvals-app` (from `story/admin-service`).
   to new `app/labels.cds` (on the `cert.manager.*` database entities), loaded from
   `app/services.cds`. Both services now get the same 15 labels without copying them.
   Checked: CertService `$metadata` identical before and after.
+- **8b part 2** Approvals list page: columns employee, code, certification, status,
+  earned on, evidence link, valid until; filters on status and earned on.
+- **8c** Approvals object page: header (employee name + certification), "Review" section,
+  and Approve / Reject / Revoke buttons (`UI.Identification` with `DataFieldForAction`).
+  New i18n texts `Approve`, `Reject`, `Revoke`, `ReviewSection`. All three buttons always
+  show; a wrong-status click gets the 400 message from `admin-service.js`.
+- `CLAUDE.md`: Claude may also edit i18n `.properties` text files when Ranjan asks.
 
 ## 12 Oct 2026: step 7, AdminService and approval flow
 

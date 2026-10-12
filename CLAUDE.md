@@ -11,7 +11,8 @@ SAP CAP + Fiori elements app that tracks employee SAP certifications and their e
 ## Working rules
 
 - **Claude never writes or edits code in this project.** Ranjan writes all code himself.
-  Claude may only write `CLAUDE.md` and the files in `docs/`. When code is needed, explain
+  Claude may only write `CLAUDE.md`, the files in `docs/`, and i18n `.properties` text
+  files (when Ranjan asks). When code is needed, explain
   what to change and where (file, line, short snippet in the chat), then let Ranjan type it.
 - The owner is a junior technical consultant. Keep code and explanations simple, in plain
   English. Explain any jargon in one line.
