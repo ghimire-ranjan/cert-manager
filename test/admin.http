@@ -1,0 +1,61 @@
+@server = http://localhost:4004
+@admin  = {{server}}/odata/v4/admin
+@cert   = {{server}}/odata/v4/cert
+@erik004 = a0000000-0000-0000-0000-000000000004
+
+# Run the requests in order, top to bottom, right after starting `npx cds watch`.
+# The database is in memory, so restarting the server resets all the data.
+
+### 1. Admin lists Pending records -> 200, includes 004
+GET {{admin}}/EmployeeCertifications?$filter=status eq 'Pending'
+Authorization: Basic chris:chris
+
+### 2. Non-admin is blocked -> 403
+GET {{admin}}/EmployeeCertifications
+Authorization: Basic ranjan:ranjan
+
+### 3. Reject Erik's record -> 200, status Rejected
+POST {{admin}}/EmployeeCertifications({{erik004}})/AdminService.reject
+Authorization: Basic chris:chris
+Content-Type: application/json
+
+{}
+
+### 4. Manager Dan lists Erik's records -> 004 is NOT in the list
+GET {{cert}}/EmployeeCertifications?$filter=employee/name eq 'Erik'
+Authorization: Basic dan:dan
+
+### 5. Erik tries to edit his Rejected record -> 403
+PATCH {{cert}}/EmployeeCertifications({{erik004}})
+Authorization: Basic erik:erik
+Content-Type: application/json
+
+{"evidenceUrl": "https://example.com/fixed"}
+
+### 6. Approve a Rejected record -> 400, wrong status
+POST {{admin}}/EmployeeCertifications({{erik004}})/AdminService.approve
+Authorization: Basic chris:chris
+Content-Type: application/json
+
+{}
+
+### 7. Revoke -> 200, status Pending
+POST {{admin}}/EmployeeCertifications({{erik004}})/AdminService.revoke
+Authorization: Basic chris:chris
+Content-Type: application/json
+
+{}
+
+### 8. Erik fixes his record now -> 200
+PATCH {{cert}}/EmployeeCertifications({{erik004}})
+Authorization: Basic erik:erik
+Content-Type: application/json
+
+{"evidenceUrl": "https://example.com/fixed"}
+
+### 9. Approve -> 200, status Verified
+POST {{admin}}/EmployeeCertifications({{erik004}})/AdminService.approve
+Authorization: Basic chris:chris
+Content-Type: application/json
+
+{}
