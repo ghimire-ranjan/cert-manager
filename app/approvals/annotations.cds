@@ -5,7 +5,7 @@ annotate service.EmployeeCertifications with @(
         {Value: employee.name},
         {Value: certificate.code},
         {Value: certificate.name},
-        {Value: status},
+        {Value: status_code},
         {Value: earnedOn},
         {
             $Type: 'UI.DataFieldWithUrl',
@@ -21,7 +21,7 @@ annotate service.EmployeeCertifications with @(
     ],
 
     UI.SelectionFields: [
-        status,
+        status_code,
         earnedOn,
     ],
 );
@@ -62,7 +62,7 @@ annotate service.EmployeeCertifications with @(
 
     UI.FieldGroup #Review: {Data: [
         {Value: certificate.code},
-        {Value: status},
+        {Value: status_code},
         {Value: earnedOn},
         {Value: validUntil},
         {
@@ -78,12 +78,12 @@ annotate service.EmployeeCertifications with @(
 );
 
 
-// Only offer the actions that fit the record's current status
+// Only offer the actions that fit the record's current status_code
 annotate service.EmployeeCertifications with actions {
-    approve @Core.OperationAvailable: ($self.status = 'Pending');
-    reject  @Core.OperationAvailable: ($self.status = 'Pending');
-    revoke  @Core.OperationAvailable: ($self.status = 'Verified'
-    or                                 $self.status = 'Rejected');
+    approve @Core.OperationAvailable: ($self.status.code = 'Pending');
+    reject  @Core.OperationAvailable: ($self.status.code = 'Pending');
+    revoke  @Core.OperationAvailable: ($self.status.code = 'Verified'
+    or                                 $self.status.code = 'Rejected');
 };
 
 
@@ -95,7 +95,7 @@ annotate service.EmployeeCertifications with @(
     },
     UI.SelectionVariant #Pending : {
         SelectOptions: [{
-            PropertyName: status,
+            PropertyName: status_code,
             Ranges      : [{
                 Sign  : #I,
                 Option: #EQ,
@@ -106,7 +106,7 @@ annotate service.EmployeeCertifications with @(
     },
     UI.SelectionVariant #Verified: {
         SelectOptions: [{
-            PropertyName: status,
+            PropertyName: status_code,
             Ranges      : [{
                 Sign  : #I,
                 Option: #EQ,
@@ -117,7 +117,7 @@ annotate service.EmployeeCertifications with @(
     },
     UI.SelectionVariant #Rejected: {
         SelectOptions: [{
-            PropertyName: status,
+            PropertyName: status_code,
             Ranges      : [{
                 Sign  : #I,
                 Option: #EQ,

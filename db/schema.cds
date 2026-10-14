@@ -2,16 +2,14 @@ namespace cert.manager;
 
 using {
     cuid,
-    managed
+    managed,
+    sap
 } from '@sap/cds/common';
 
-type Status : String(20) enum {
-    Planned;
-    LearningJourney;
-    Pending;
-    Verified;
-    Rejected;
+entity Statuses : sap.common.CodeList {
+    key code : String(20);
 }
+
 
 entity Certifications : cuid, managed {
     code   : String(20)  @mandatory;
@@ -29,17 +27,18 @@ entity Employees : cuid, managed {
 
 
 entity EmployeeCertifications : cuid, managed {
-    employee                  : Association to Employees      @mandatory;
-    certificate               : Association to Certifications @mandatory;
+    employee                  : Association to Employees                  @mandatory;
+    certificate               : Association to Certifications             @mandatory;
     earnedOn                  : Date;
     plannedFor                : Date;
     isEarned                  : Boolean = (
         earnedOn is not null
     );
-    validUntil                : Date                          @readonly;
-    evidenceUrl               : String(500)                   @assert.format: '^https://';
-    status                    : Status default 'Planned'      @assert.range;
+    validUntil                : Date                                      @readonly;
+    evidenceUrl               : String(500)                               @assert.format: '^https://';
+    status                    : Association to Statuses default 'Planned' @assert.target;
 
-    virtual daysUntilExpiry   : Integer                       @readonly;
-    virtual expiryCriticality : Integer                       @readonly;
+
+    virtual daysUntilExpiry   : Integer                                   @readonly;
+    virtual expiryCriticality : Integer                                   @readonly;
 }

@@ -4,7 +4,11 @@ using {cert.manager as my} from '../db/schema';
 annotate my.EmployeeCertifications with {
     certificate       @Common.Label: '{i18n>Certificate}';
     employee          @Common.Label: '{i18n>Employee}';
-    status            @Common.Label: '{i18n>Status}';
+    status            @Common.Label          : '{i18n>Status}'
+                      @Common.Text           : status.name
+                      @Common.TextArrangement: #TextOnly
+                      @Common.ValueListWithFixedValues;
+
     earnedOn          @Common.Label: '{i18n>EarnedOn}';
     plannedFor        @Common.Label: '{i18n>PlannedFor}';
     validUntil        @Common.Label: '{i18n>ValidUntil}';

@@ -14,4 +14,9 @@ service AdminService {
             action reject()  returns EmployeeCertifications;
             action revoke()  returns EmployeeCertifications;
         };
+
+
+    @readonly
+    entity Statuses               as projection on my.Statuses;
+
 }

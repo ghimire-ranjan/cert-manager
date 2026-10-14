@@ -43,21 +43,21 @@ service CertService {
         {
             grant: 'UPDATE',
             to   : 'authenticated-user',
-            where: 'employee.userID = $user and (status = ''Planned'' or status = ''LearningJourney'' or status = ''Pending'')'
+            where: 'employee.userID = $user and (status_code  = ''Planned'' or status_code  = ''LearningJourney'' or status_code  = ''Pending'')'
 
         },
 
-        //only allow manger to read except with status reject
+        //only allow manger to read except with status_code  reject
     
         {
             grant: 'READ',
             to   : 'authenticated-user',
-            where: 'employee.manager.userID = $user and status <> ''Rejected'''
+            where: 'employee.manager.userID = $user and status_code  <> ''Rejected'''
         },
         {
             grant: 'DELETE',
             to   : 'authenticated-user',
-            where: 'employee.userID = $user and (status = ''Planned'' or status = ''LearningJourney''  or status = ''Pending'')'
+            where: 'employee.userID = $user and (status_code  = ''Planned'' or status_code  = ''LearningJourney''  or status_code  = ''Pending'')'
         },
         {
             grant: '*',
@@ -65,4 +65,9 @@ service CertService {
         }
     ]
     entity EmployeeCertifications as projection on my.EmployeeCertifications;
+
+    
+    @readonly
+    entity Statuses as projection on my.Statuses;
+
 }

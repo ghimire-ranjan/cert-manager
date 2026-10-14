@@ -5,7 +5,7 @@ annotate service.EmployeeCertifications with @(
         {Value: certificate.code},
         {Value: certificate.name},
         {Value: employee.name},
-        {Value: status},
+        {Value: status_code},
         {Value: plannedFor},
         {Value: validUntil},
         {
@@ -16,7 +16,7 @@ annotate service.EmployeeCertifications with @(
     ],
 
     UI.SelectionFields: [
-        status,
+        status_code,
         validUntil,
         isEarned,
     ],
@@ -49,7 +49,7 @@ annotate service.EmployeeCertifications with @(
     UI.FieldGroup #General : {Data: [
         {Value: certificate.code},
         {Value: employee.name},
-        {Value: status},
+        {Value: status_code},
         {
             $Type: 'UI.DataFieldWithUrl',
             Value: evidenceUrl,
