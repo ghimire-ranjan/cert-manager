@@ -82,12 +82,12 @@ and approve twice -> 400, erik edit of Verified -> 403.
       `app/labels.cds`: on `status` add `@Common.Text: status.name`,
       `@Common.TextArrangement: #TextOnly`, `@Common.ValueListWithFixedValues` (all
       checked: they reach `status_code` in `$metadata`).
-- [ ] **10f** `test/admin.http`: `$filter=status eq` -> `$filter=status_code eq`.
+- [x] **10f** `test/admin.http`: `$filter=status eq` -> `$filter=status_code eq`.
 - [ ] **10g** Test in the browser: dropdown in both filter bars, names shown in tables,
       tabs and Approve / Reject / Revoke buttons still right; run `test/admin.http`.
       (14 Oct: buttons confirmed working after Ctrl+F5; API checks pass. Dropdown and
       `test/admin.http` run still to confirm.)
-- [ ] **10h** Tidy the Replace All leftovers: `srv/admin-service.js` names back to
+- [x] **10h** Tidy the Replace All leftovers: `srv/admin-service.js` names back to
       `changeStatus` / `oldStatus` / `newStatus`; `srv/cert-service.js` line 5 comment and
       line 21 message (`Status '...' needs an earnedOn date`, users see it).
 

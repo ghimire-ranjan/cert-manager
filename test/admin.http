@@ -7,7 +7,7 @@
 # The database is in memory, so restarting the server resets all the data.
 
 ### 1. Admin lists Pending records -> 200, includes 004
-GET {{admin}}/EmployeeCertifications?$filter=status eq 'Pending'
+GET {{admin}}/EmployeeCertifications?$filter=status_code eq 'Pending'
 Authorization: Basic chris:chris
 
 ### 2. Non-admin is blocked -> 403

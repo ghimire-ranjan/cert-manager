@@ -24,9 +24,10 @@ Branch `story/status-codelist` (from `main`).
   only a warning (a typo `status_` compiled); after the rename the browser needed Ctrl+F5
   before the action buttons worked. Tested: compile clean, erik 3 / dan 9 / chris 10,
   self-verify 400, unknown code 400, approve works (API and browser).
-  Still open: `test/admin.http` request 2 filters on `status` (fails until changed to
-  `status_code`); Replace All leftovers in `srv/*.js` (`changestatus` names, message text
-  "status  'X' needs…" on line 21).
+- **10f/10h** (15 Oct, `250ad6b`, `24d58b5`, and the next commit) `test/admin.http`
+  request 1 filters on `status_code`; `changeStatus` / `oldStatus` / `newStatus` names
+  restored after a Replace All renamed them; error message starts with "Status" again.
+  (The two messages still have a double space: `Status  'X'`. Cosmetic.)
 
 ## 14 Oct 2026: step 8, Approvals app
 
