@@ -13,6 +13,11 @@ annotate service.EmployeeCertifications with @(
             Url  : evidenceUrl
         },
         {Value: validUntil},
+                {
+            Value      : daysUntilExpiry,
+            Criticality: expiryCriticality
+        },
+
     ],
 
     UI.SelectionFields: [
