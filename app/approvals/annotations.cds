@@ -69,11 +69,52 @@ annotate service.EmployeeCertifications with @(
 );
 
 
-
 // Only offer the actions that fit the record's current status
 annotate service.EmployeeCertifications with actions {
     approve @Core.OperationAvailable: ($self.status = 'Pending');
     reject  @Core.OperationAvailable: ($self.status = 'Pending');
-    revoke  @Core.OperationAvailable: ($self.status = 'Verified' or $self.status = 'Rejected');
+    revoke  @Core.OperationAvailable: ($self.status = 'Verified'
+    or                                 $self.status = 'Rejected');
 };
 
+
+//tabs use selction Variant
+annotate service.EmployeeCertifications with @(
+    UI.SelectionVariant #All     : {
+        SelectOptions: [],
+        Text         : '{i18n>TabAll}'
+    },
+    UI.SelectionVariant #Pending : {
+        SelectOptions: [{
+            PropertyName: status,
+            Ranges      : [{
+                Sign  : #I,
+                Option: #EQ,
+                Low   : 'Pending'
+            }]
+        }],
+        Text         : '{i18n>TabPending}'
+    },
+    UI.SelectionVariant #Verified: {
+        SelectOptions: [{
+            PropertyName: status,
+            Ranges      : [{
+                Sign  : #I,
+                Option: #EQ,
+                Low   : 'Verified'
+            }]
+        }],
+        Text         : '{i18n>TabVerified}'
+    },
+    UI.SelectionVariant #Rejected: {
+        SelectOptions: [{
+            PropertyName: status,
+            Ranges      : [{
+                Sign  : #I,
+                Option: #EQ,
+                Low   : 'Rejected'
+            }]
+        }],
+        Text         : '{i18n>TabRejected}'
+    },
+);

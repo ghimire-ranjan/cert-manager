@@ -103,6 +103,27 @@
             "settings": {
               "contextPath": "/EmployeeCertifications",
               "variantManagement": "Page",
+              "views": {
+                "paths": [
+                  {
+                    "key": "all",
+                    "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#All"
+                  },
+                  {
+                    "key": "pending",
+                    "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#Pending"
+                  },
+                  {
+                    "key": "verified",
+                    "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#Verified"
+                  },
+                  {
+                    "key": "rejected",
+                    "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#Rejected"
+                  }
+                ],
+                "showCounts": true
+              },
               "navigation": {
                 "EmployeeCertifications": {
                   "detail": {
