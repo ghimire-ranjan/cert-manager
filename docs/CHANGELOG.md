@@ -31,6 +31,14 @@ Branch `story/approvals-app` (from `story/admin-service`).
   Pending -> Approve, Reject; Verified/Rejected -> Revoke; Planned/LearningJourney ->
   none. Uses `$self.status` (`in.status` does not compile: `in` is a reserved word). The
   server check in `admin-service.js` stays as the safety net.
+- **8d** (14 Oct, `4baa17c`) Approvals list page has tabs All / Pending / Verified /
+  Rejected with counts. Four `UI.SelectionVariant`s (filter on `status`; All has no
+  filter) in `app/approvals/annotations.cds`, tab texts `TabAll`…`TabRejected` in i18n.
+  `manifest.json` uses `"views"` (multiple table mode: one table per tab, each needs a
+  `key`), not `quickVariantSelection` inside `tableSettings`: with more than 3 variants
+  that shows a dropdown, not tabs. Tested with the dropdown version: counts right, and a
+  Reject moved a record from Pending to Rejected. Counts refresh only for tabs already
+  opened (SAP docs).
 
 ## 12 Oct 2026: step 7, AdminService and approval flow
 
