@@ -10,7 +10,27 @@ step, and start a new empty Unreleased section on top.
 
 ## Unreleased
 
-Branch `story/approvals-app` (from `story/admin-service`).
+Branch `story/status-codelist` (from `main`).
+
+- **10** (14 Oct, `5874b43`) Status is now a code list. `db/schema.cds`: the `Status` enum
+  became `entity Statuses : sap.common.CodeList { key code }`, and
+  `status : Association to Statuses default 'Planned' @assert.target` (column
+  `status_code`). New `db/data/cert.manager-Statuses.csv` (5 codes, readable names). Both
+  services expose `Statuses` read-only; `@restrict` rules, `applyRules`, `changeStatus` and
+  all annotations use `status_code`. `app/labels.cds` adds `@Common.Text: status.name`,
+  `#TextOnly` and `@Common.ValueListWithFixedValues`, so both filter bars get a Status
+  dropdown and tables show "Learning Journey". CAP adds the value help itself (CodeList).
+  Gotchas: annotation expressions need `$self.status.code`; an unknown name in `Value:` is
+  only a warning (a typo `status_` compiled); after the rename the browser needed Ctrl+F5
+  before the action buttons worked. Tested: compile clean, erik 3 / dan 9 / chris 10,
+  self-verify 400, unknown code 400, approve works (API and browser).
+  Still open: `test/admin.http` request 2 filters on `status` (fails until changed to
+  `status_code`); Replace All leftovers in `srv/*.js` (`changestatus` names, message text
+  "status  'X' needs…" on line 21).
+
+## 14 Oct 2026: step 8, Approvals app
+
+Branch `story/approvals-app` (from `story/admin-service`). Merged into `main` (`86c14ac`).
 
 - **8a** Approvals app generated with Fiori tools 1.25.0 in `app/approvals`: List Report
   V4 on `AdminService`, main entity `EmployeeCertifications`, no virtual endpoints (real

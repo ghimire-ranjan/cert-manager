@@ -51,6 +51,46 @@ Original goal: Fiori elements app on AdminService, tabs All / Pending / Verified
       (`UI.SelectionPresentationVariant`), Approve / Reject / Revoke buttons.
       Annotations only, no JavaScript.
 
+### Step 10: Status as a code list (value help)
+
+Branch `story/status-codelist` (from `main`). Decided 14 Oct: option B (code list), not a
+separate value-list entity next to the enum. Goal: a Status dropdown in the filter bars
+of both apps that shows readable names ("Learning Journey").
+
+How it works: `status` becomes an association to a new `Statuses` code list. The database
+column becomes `status_code`; the codes stay the same text (`Planned`, `Pending`, ...), so
+no data changes, only names. CAP adds the value help to `Statuses` by itself.
+
+Prototype on a copy (14 Oct) passed: counts erik 3 / dan 9 / chris 10, filter on
+`status_code`, create plan -> Planned, create earned -> Pending + validUntil, unknown
+status -> 400 "Target with this key doesn't exist", self-verify -> 400, approve works
+and approve twice -> 400, erik edit of Verified -> 403.
+
+- [x] **10a** `db/schema.cds`: replace `type Status … enum` with
+      `entity Statuses : sap.common.CodeList { key code : String(20); }` (add `sap` to the
+      `using` line); `status : Association to Statuses default 'Planned' @assert.target;`
+- [x] **10b** `db/data`: new `cert.manager-Statuses.csv` (`code,name`, 5 rows);
+      `cert.manager-EmployeeCertifications.csv` header `status` -> `status_code`.
+- [x] **10c** `srv/cert-service.cds` and `srv/admin-service.cds`: expose
+      `@readonly entity Statuses as projection on my.Statuses;`. In the three `@restrict`
+      `where` texts: `status` -> `status_code`.
+- [x] **10d** `srv/cert-service.js` (`applyRules` and the UPDATE handler) and
+      `srv/admin-service.js` (`changeStatus`): `.status` -> `.status_code`.
+- [x] **10e** Annotations, both apps: `status` -> `status_code` in `LineItem`,
+      `SelectionFields`, `FieldGroup`, tab `PropertyName`s. In `@Core.OperationAvailable`
+      write `$self.status.code` (`$self.status_code` does not compile there).
+      `app/labels.cds`: on `status` add `@Common.Text: status.name`,
+      `@Common.TextArrangement: #TextOnly`, `@Common.ValueListWithFixedValues` (all
+      checked: they reach `status_code` in `$metadata`).
+- [ ] **10f** `test/admin.http`: `$filter=status eq` -> `$filter=status_code eq`.
+- [ ] **10g** Test in the browser: dropdown in both filter bars, names shown in tables,
+      tabs and Approve / Reject / Revoke buttons still right; run `test/admin.http`.
+      (14 Oct: buttons confirmed working after Ctrl+F5; API checks pass. Dropdown and
+      `test/admin.http` run still to confirm.)
+- [ ] **10h** Tidy the Replace All leftovers: `srv/admin-service.js` names back to
+      `changeStatus` / `oldStatus` / `newStatus`; `srv/cert-service.js` line 5 comment and
+      line 21 message (`Status '...' needs an earnedOn date`, users see it).
+
 ### Step 9: Employees app (admin)
 
 - [ ] Add a "to many" link from `Employees` to `EmployeeCertifications` in

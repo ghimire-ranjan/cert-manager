@@ -55,6 +55,7 @@ The seed data also has `john`, an inactive employee with no login.
 | Certification | An item in the catalogue, e.g. `C_CPE`. Table `Certifications`. |
 | Employee | A person. `userID` matches their login name. Table `Employees`. |
 | Employee certification | One employee + one certification + dates + status. The main table: `EmployeeCertifications`. |
+| Status | A code list, table `Statuses` (`code` + readable `name`). Codes: `Planned`, `LearningJourney`, `Pending`, `Verified`, `Rejected`. The column on `EmployeeCertifications` is `status_code`. |
 | `earnedOn` | Date the exam was passed. If empty, the certification is not earned yet. |
 | `plannedFor` | Target exam date, used before the certification is earned. |
 | `validUntil` | Expiry date. Always calculated as `earnedOn` + 12 months. Users cannot type it. |
@@ -124,7 +125,7 @@ Managers do not use AdminService. A read-only "My Team" app for managers is park
 
 | File | What it does |
 | --- | --- |
-| `db/schema.cds` | Data model: 3 tables and the `Status` list |
+| `db/schema.cds` | Data model: 3 tables and the `Statuses` code list |
 | `db/data/*.csv` | Seed data: 10 SAP certifications, 5 employees, 10 records |
 | `srv/cert-service.cds` | The OData service `CertService` and who can do what |
 | `srv/cert-service.js` | Business rules (before CREATE/UPDATE) and the days-left calculation (READ) |
@@ -156,7 +157,8 @@ The OData service runs at `http://localhost:4004/odata/v4/cert/`.
 | Catalogue is SAP-only, with "SAP Certified Associate - ..." names | Non-SAP certifications broke the 12-month rule; the names match current SAP naming |
 | Labels via `@Common.Label` + i18n, not inside `UI.LineItem` | One label per field, reused by the table, filter and object page |
 | Labels live on the database entities (`app/labels.cds`), not on a service | Every service built on the entities inherits them, so both apps share one set |
-| Action buttons use `@Core.OperationAvailable` with `$self.status`, and the server checks again | The UI only offers moves that are allowed; the server still blocks direct API calls |
+| Action buttons use `@Core.OperationAvailable` with `$self.status.code`, and the server checks again | The UI only offers moves that are allowed; the server still blocks direct API calls. Inside annotation expressions write `status.code`; `status_code` does not compile there |
+| Status is a code list (`Statuses : sap.common.CodeList`), not an enum (14 Oct) | Gives a dropdown in the filter bars, readable names ("Learning Journey"), translatable names later, and `@assert.target` rejects unknown codes. The codes stayed the same text, so no data changed |
 | Error messages name the field (`req.error(400, msg, "earnedOn")`) | Fiori highlights the wrong field in red |
 | Approve / reject / revoke go in a separate `AdminService` (admin only) | Keeps admin-only things out of the employee app |
 | One audience per service: admin apps on `AdminService`, a future manager app on its own `TeamService` | The UI shows the same buttons to every user of a service, so mixing roles shows buttons that fail with 403 |
@@ -170,7 +172,8 @@ The OData service runs at `http://localhost:4004/odata/v4/cert/`.
 - `fixes`: step 6 (6a-6c and the first changelog).
 - `story/admin-service` (from `fixes`): step 7, AdminService + docs. Pushed, finished.
 - `story/approvals-app` (from `story/admin-service`): step 8, the Approvals Fiori app.
-  Current work.
+  Merged into `main` and pushed (14 Oct, `main` at `86c14ac`).
+- `story/status-codelist` (from `main`): step 10, status as a code list. Current work.
 - New work goes on a `story/<short-name>` branch.
 - Commit messages follow the step numbers: `1`, `2`, `3a`, `3b` ... `6c`.
 - Pushing needs the `ghimire-ranjan` GitHub account. The `ranjan-ghimire` work account gets
