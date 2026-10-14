@@ -131,6 +131,7 @@ Managers do not use AdminService. A read-only "My Team" app for managers is park
 | `srv/admin-service.cds` | `AdminService` for the admin apps: entities and the approve / reject / revoke actions |
 | `srv/admin-service.js` | The action logic: one `changeStatus` helper that checks the current status |
 | `srv/lib/expiry.js` | Date helpers: `today`, `addOneYear`, `daysUntil`, `criticality` |
+| `srv/lib/expiry-fields.js` | `addExpiryFields(srv, entity)`: the READ handlers that fill Days Left and its colour; called by both services |
 | `app/certifications/annotations.cds` | Fiori UI: table columns, filter bar, object page |
 | `app/certifications/webapp/` | Generated Fiori app (`manifest.json` etc.). Usually no need to edit. |
 | `app/approvals/annotations.cds` | Fiori UI for the admin **Approvals** app (on AdminService) |

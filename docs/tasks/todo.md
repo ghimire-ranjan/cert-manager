@@ -44,8 +44,8 @@ Branch `story/approvals-app`.
       (`@Core.OperationAvailable`, done 13 Oct).
 - [x] **8d** Tabs All / Pending / Verified / Rejected (done 14 Oct: `"views"` in
       `manifest.json`, one `UI.SelectionVariant` per tab).
-- [ ] **8e** "Days left" in AdminService (the calculation lives only in
-      `cert-service.js` today).
+- [x] **8e** "Days left" in AdminService (done 14 Oct: shared
+      `srv/lib/expiry-fields.js`, coloured column in table and Review section).
 
 Original goal: Fiori elements app on AdminService, tabs All / Pending / Verified / Rejected
       (`UI.SelectionPresentationVariant`), Approve / Reject / Revoke buttons.

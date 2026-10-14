@@ -36,9 +36,21 @@ Branch `story/approvals-app` (from `story/admin-service`).
   filter) in `app/approvals/annotations.cds`, tab texts `TabAll`…`TabRejected` in i18n.
   `manifest.json` uses `"views"` (multiple table mode: one table per tab, each needs a
   `key`), not `quickVariantSelection` inside `tableSettings`: with more than 3 variants
-  that shows a dropdown, not tabs. Tested with the dropdown version: counts right, and a
-  Reject moved a record from Pending to Rejected. Counts refresh only for tabs already
-  opened (SAP docs).
+  that shows a dropdown, not tabs. Tested with the dropdown version (counts right, a
+  Reject moved a record from Pending to Rejected), then the tabs version in the browser.
+  Counts refresh only for tabs already opened (SAP docs).
+- **8e** (14 Oct, `2be4c20`) The two READ handlers for Days Left (`before` adds
+  `validUntil` to the columns, `after` fills `daysUntilExpiry` and `expiryCriticality`)
+  moved from `cert-service.js` to new `srv/lib/expiry-fields.js` as
+  `addExpiryFields(srv, entity)`. `cert-service.js` and `admin-service.js` each call it
+  once, so AdminService gets Days Left without copying code. `expiry.js` stays pure date
+  maths (no CAP). Tested: both services return the same values; erik still 3 records on
+  CertService and 403 on AdminService; approve and create-with-`earnedOn` still work.
+- **8e** (14 Oct, `6e33f69`, `be16852`) Approvals app shows Days Left with colour in the
+  table and the Review section (`Criticality: expiryCriticality`). `expiryCriticality`
+  gets `@UI.Hidden` in `app/labels.cds`, so neither app offers the raw colour code in the
+  column/filter settings. Lesson: a column added through the table settings (gear) shows
+  the raw value only; colour needs the `Criticality` link in an annotation.
 
 ## 12 Oct 2026: step 7, AdminService and approval flow
 
