@@ -13,7 +13,7 @@ annotate service.EmployeeCertifications with @(
             Url  : evidenceUrl
         },
         {Value: validUntil},
-                {
+        {
             Value      : daysUntilExpiry,
             Criticality: expiryCriticality
         },
@@ -65,6 +65,10 @@ annotate service.EmployeeCertifications with @(
         {Value: status},
         {Value: earnedOn},
         {Value: validUntil},
+        {
+            Value      : daysUntilExpiry,
+            Criticality: expiryCriticality
+        },
         {
             $Type: 'UI.DataFieldWithUrl',
             Value: evidenceUrl,
