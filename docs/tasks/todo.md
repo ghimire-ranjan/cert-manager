@@ -83,7 +83,7 @@ and approve twice -> 400, erik edit of Verified -> 403.
       `@Common.TextArrangement: #TextOnly`, `@Common.ValueListWithFixedValues` (all
       checked: they reach `status_code` in `$metadata`).
 - [x] **10f** `test/admin.http`: `$filter=status eq` -> `$filter=status_code eq`.
-- [ ] **10g** Test in the browser: dropdown in both filter bars, names shown in tables,
+- [x] **10g** Test in the browser: dropdown in both filter bars, names shown in tables,
       tabs and Approve / Reject / Revoke buttons still right; run `test/admin.http`.
       (14 Oct: buttons confirmed working after Ctrl+F5; API checks pass. Dropdown and
       `test/admin.http` run still to confirm.)
@@ -114,10 +114,10 @@ Decisions (15 Oct, Ranjan agreed to Claude's suggestions):
 - Managers see an Edit button on their team's records and get 403 if they click it.
   Accepted for now (server blocks it); the "My Team" app stays parked.
 
-- [ ] **11a** `srv/cert-service.cds`: `@odata.draft.enabled` on `EmployeeCertifications`.
-- [ ] **11b** `srv/cert-service.js`: `before('NEW', EmployeeCertifications.drafts, …)` fills
+- [x] **11a** `srv/cert-service.cds`: `@odata.draft.enabled` on `EmployeeCertifications`.
+- [x] **11b** `srv/cert-service.js`: `before('NEW', EmployeeCertifications.drafts, …)` fills
       `employee_ID` with the logged-in employee (no admin exception).
-- [ ] **11c** `app/certifications/annotations.cds`, object page: show `certificate_ID`
+- [x] **11c** `app/certifications/annotations.cds`, object page: show `certificate_ID`
       (not `certificate.code`) so it can be picked: `@Common.ValueList` on `Certifications`
       (code, name) + `@Common.Text: certificate.name`. Show `employee_ID` with
       `@Common.Text: employee.name` and `@Common.FieldControl: #ReadOnly` (UI only).

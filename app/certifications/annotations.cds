@@ -47,8 +47,8 @@ annotate service.EmployeeCertifications with @(
     ],
 
     UI.FieldGroup #General : {Data: [
-        {Value: certificate.code},
-        {Value: employee.name},
+        {Value: certificate_ID},
+        {Value: employee_ID},
         {Value: status_code},
         {
             $Type: 'UI.DataFieldWithUrl',
@@ -68,4 +68,27 @@ annotate service.EmployeeCertifications with @(
         }
     ]}
 );
+
+
+// Pick a certification from the catalogue; the employee is filled in by the server
+annotate service.EmployeeCertifications with {
+    certificate @Common.Text: certificate.name
+                @Common.TextArrangement: #TextOnly
+                @Common.ValueList: {
+                    CollectionPath: 'Certifications',
+                    Parameters    : [
+                        { $Type: 'Common.ValueListParameterInOut',       LocalDataProperty: certificate_ID, ValueListProperty: 'ID' },
+                        { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'code' },
+                        { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'name' }
+                    ]
+                };
+    employee    @Common.Text: employee.name
+                @Common.TextArrangement: #TextOnly
+                @Common.FieldControl: #ReadOnly;
+};
+
+// In the value help, show the name instead of the ID
+annotate service.Certifications with {
+    ID @Common.Text: name @Common.TextArrangement: #TextOnly;
+};
 
