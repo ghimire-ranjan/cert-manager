@@ -18,7 +18,7 @@ function applyRules(req, data, stored) {
     if (!["Planned", "LearningJourney"].includes(data.status_code )) {
       return req.error(
         400,
-        `status  '${data.status_code }' needs an earnedOn date`,
+        `Status  '${data.status_code }' needs an earnedOn date`,
         "earnedOn",
       );
     }
