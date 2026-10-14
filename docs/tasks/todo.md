@@ -121,6 +121,12 @@ Decisions (15 Oct, Ranjan agreed to Claude's suggestions):
       (not `certificate.code`) so it can be picked: `@Common.ValueList` on `Certifications`
       (code, name) + `@Common.Text: certificate.name`. Show `employee_ID` with
       `@Common.Text: employee.name` and `@Common.FieldControl: #ReadOnly` (UI only).
+- [ ] **11c+** (agreed 15 Oct, after 11c works) Employee field editable for admins only:
+      virtual `employeeFieldControl` (1 = read-only, 7 = required) filled per user in a
+      READ handler (also for drafts), `@Common.FieldControl: employeeFieldControl` instead
+      of `#ReadOnly`, and a value help on `Employees` so Chris can pick a person. Static
+      annotations can't do this because `$metadata` is the same for every user.
+      Prototype first.
 - [ ] **11d** Test in the browser as erik: Create a plan, Create an earned cert (becomes
       Pending), Edit own Planned, Edit button on own Verified fails, Delete own Planned.
       As chris: Create gets Chris filled in. As dan: Edit on a team record fails (403).

@@ -39,7 +39,7 @@ service CertService {
             where: 'employee.userID = $user'
         },
 
-        //only allow edit to certain statues 
+        //only allow edit to certain statues
         {
             grant: 'UPDATE',
             to   : 'authenticated-user',
@@ -48,7 +48,7 @@ service CertService {
         },
 
         //only allow manger to read except with status_code  reject
-    
+
         {
             grant: 'READ',
             to   : 'authenticated-user',
@@ -64,10 +64,11 @@ service CertService {
             to   : 'admin'
         }
     ]
+    @odata.draft.enabled
     entity EmployeeCertifications as projection on my.EmployeeCertifications;
 
-    
+
     @readonly
-    entity Statuses as projection on my.Statuses;
+    entity Statuses               as projection on my.Statuses;
 
 }

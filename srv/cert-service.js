@@ -36,6 +36,14 @@ module.exports = class CertService extends cds.ApplicationService {
   init() {
     const { EmployeeCertifications, Employees } = this.entities;
 
+
+        // New draft: fill in the logged-in employee straight away
+    this.before("NEW", EmployeeCertifications.drafts, async (req) => {
+      const self = await SELECT.one.from(Employees).where({ userID: req.user.id });
+      if (self) req.data.employee_ID = self.ID;
+    });
+
+    
     this.before("CREATE", EmployeeCertifications, async (req) => {
       if (!req.user.is("admin")) {
         const self = await SELECT.one
