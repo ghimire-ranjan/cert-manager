@@ -1,17 +1,17 @@
 const cds = require("@sap/cds");
 const { addExpiryFields } = require("./lib/expiry-fields.js");
 
-async function changestatus (req, oldstatus , newstatus ) {
+async function changeStatus (req, oldStatus , newStatus ) {
   const record = await SELECT.one.from(req.subject);
   if (!record) return req.error(404, "Record not found");
-  if (!oldstatus .includes(record.status_code )) {
+  if (!oldStatus .includes(record.status_code )) {
     return req.error(
       400,
-      `Only ${oldstatus .join(" or ")} records can be changed to ${newstatus }`,
+      `Only ${oldStatus .join(" or ")} records can be changed to ${newStatus }`,
     );
   }
 
-  await UPDATE(req.subject).with({ status_code : newstatus  });
+  await UPDATE(req.subject).with({ status_code : newStatus  });
   return SELECT.one.from(req.subject);
 }
 
@@ -19,15 +19,15 @@ module.exports = class AdminService extends cds.ApplicationService {
   init() {
     const { EmployeeCertifications } = this.entities;
     this.on("approve", EmployeeCertifications, (req) =>
-      changestatus (req, ["Pending"], "Verified"),
+      changeStatus (req, ["Pending"], "Verified"),
     );
 
     this.on("reject", EmployeeCertifications, (req) =>
-      changestatus (req, ["Pending"], "Rejected"),
+      changeStatus (req, ["Pending"], "Rejected"),
     );
 
     this.on("revoke", EmployeeCertifications, (req) =>
-      changestatus (req, ["Verified", "Rejected"], "Pending"),
+      changeStatus (req, ["Verified", "Rejected"], "Pending"),
     );
     addExpiryFields(this, EmployeeCertifications);
 

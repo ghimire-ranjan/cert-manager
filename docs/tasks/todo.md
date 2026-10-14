@@ -91,6 +91,41 @@ and approve twice -> 400, erik edit of Verified -> 403.
       `changeStatus` / `oldStatus` / `newStatus`; `srv/cert-service.js` line 5 comment and
       line 21 message (`Status '...' needs an earnedOn date`, users see it).
 
+### Step 11: Draft in the Certifications app (create and edit)
+
+Branch `story/draft` (from `main`, after step 10 is merged). Goal: employees create plans,
+submit earned certifications and edit their own records in the app. Today the app has no
+Create or Edit button: Fiori elements V4 needs draft for that.
+
+Prototype on a copy (15 Oct) passed: the existing `before('CREATE')` / `before('UPDATE')`
+handlers run when a draft is saved, so all rules work unchanged. New draft without help:
+`ASSERT_MANDATORY` on `employee_ID` (the parked `@mandatory` item). Fixed with a
+`before('NEW')` handler on the drafts that fills in the logged-in employee. Then: save
+plan -> Planned; save earned + "Verified" -> Pending, validUntil +1 year; self-verify on
+edit -> 400; erik edits own Verified -> 403; dan edits erik's -> 403; admin approve
+unchanged.
+
+Decisions (15 Oct, Ranjan agreed to Claude's suggestions):
+
+- Status dropdown offers all 5; the server rejects wrong choices with a message. A
+  filtered dropdown (Planned / Learning Journey only) can come later.
+- The employee is filled in for everyone (admins too) and is read-only in this app. This
+  is the employee's own app; assigning to someone else waits for the Employees app.
+- Managers see an Edit button on their team's records and get 403 if they click it.
+  Accepted for now (server blocks it); the "My Team" app stays parked.
+
+- [ ] **11a** `srv/cert-service.cds`: `@odata.draft.enabled` on `EmployeeCertifications`.
+- [ ] **11b** `srv/cert-service.js`: `before('NEW', EmployeeCertifications.drafts, …)` fills
+      `employee_ID` with the logged-in employee (no admin exception).
+- [ ] **11c** `app/certifications/annotations.cds`, object page: show `certificate_ID`
+      (not `certificate.code`) so it can be picked: `@Common.ValueList` on `Certifications`
+      (code, name) + `@Common.Text: certificate.name`. Show `employee_ID` with
+      `@Common.Text: employee.name` and `@Common.FieldControl: #ReadOnly` (UI only).
+- [ ] **11d** Test in the browser as erik: Create a plan, Create an earned cert (becomes
+      Pending), Edit own Planned, Edit button on own Verified fails, Delete own Planned.
+      As chris: Create gets Chris filled in. As dan: Edit on a team record fails (403).
+- [ ] **11e** Remove the parked `@mandatory` item (solved by 11b); update docs.
+
 ### Step 9: Employees app (admin)
 
 - [ ] Add a "to many" link from `Employees` to `EmployeeCertifications` in
@@ -110,7 +145,7 @@ These were spotted and left alone on purpose.
 | --- | --- |
 | Put mocked users under `[development]` and add XSUAA under `[production]` | Only matters when deploying. Until then a deployed app would accept `chris` / `chris` from anyone. |
 | `@Capabilities` so the UI hides buttons the user can't use | `$metadata` is the same for every user, so a fixed `Deletable: false` would hide Delete from the admin too. Needs a per-row field instead. |
-| `@mandatory` on `employee` fires before the CREATE handler fills in `employee_ID` | CAP runs checks in this order. Ask a senior before working around it. Confirmed 12 Oct: a normal user who leaves out `employee_ID` gets `400 ASSERT_MANDATORY` on `employee_ID`. This matters for the "create" button in the Fiori app. |
+| (Solution planned in step 11b: fill `employee_ID` when the draft is created.) `@mandatory` on `employee` fires before the CREATE handler fills in `employee_ID` | CAP runs checks in this order. Ask a senior before working around it. Confirmed 12 Oct: a normal user who leaves out `employee_ID` gets `400 ASSERT_MANDATORY` on `employee_ID`. This matters for the "create" button in the Fiori app. |
 | Comment in `srv/lib/expiry.js` saying "12 months is a scope decision" | Small; do it next time that file is touched. |
 | Reject reason (e.g. a `rejectionReason` field, required on Reject) | Decided 12 Oct: not now. |
 | Server warning: action `reject` clashes with CAP's built-in `reject` method | Harmless: the action works over HTTP (tested). CAP only skips creating a typed JS shortcut. Renaming (e.g. `rejectRecord`) would silence it, but changes the button and URL. |
