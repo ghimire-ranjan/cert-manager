@@ -121,16 +121,18 @@ Decisions (15 Oct, Ranjan agreed to Claude's suggestions):
       (not `certificate.code`) so it can be picked: `@Common.ValueList` on `Certifications`
       (code, name) + `@Common.Text: certificate.name`. Show `employee_ID` with
       `@Common.Text: employee.name` and `@Common.FieldControl: #ReadOnly` (UI only).
-- [ ] **11c+** (agreed 15 Oct, after 11c works) Employee field editable for admins only:
-      virtual `employeeFieldControl` (1 = read-only, 7 = required) filled per user in a
-      READ handler (also for drafts), `@Common.FieldControl: employeeFieldControl` instead
-      of `#ReadOnly`, and a value help on `Employees` so Chris can pick a person. Static
-      annotations can't do this because `$metadata` is the same for every user.
-      Prototype first.
-- [ ] **11d** Test in the browser as erik: Create a plan, Create an earned cert (becomes
+- ~~**11c+**~~ **Dropped 15 Oct** (Ranjan and Claude agreed): Employee field editable for
+      admins only. Not needed by the concept: employees file their own records here;
+      assigning or correcting the person belongs in the Employees app (step 9). Kept as a
+      note in case it is needed later: virtual `employeeFieldControl` (1 = read-only,
+      7 = required) filled per user in `after('READ', [EmployeeCertifications,
+      EmployeeCertifications.drafts], (rows, req) => …)`, `@Common.FieldControl:
+      employeeFieldControl`, a value help on `Employees`, `@UI.Hidden` on the helper field.
+      Prototype passed (erik 1, chris 7, chris could save a record for dan, erik could not).
+- [x] **11d** Test in the browser as erik: Create a plan, Create an earned cert (becomes
       Pending), Edit own Planned, Edit button on own Verified fails, Delete own Planned.
       As chris: Create gets Chris filled in. As dan: Edit on a team record fails (403).
-- [ ] **11e** Remove the parked `@mandatory` item (solved by 11b); update docs.
+- [x] **11e** Remove the parked `@mandatory` item (solved by 11b); update docs.
 
 ### Step 9: Employees app (admin)
 
@@ -151,7 +153,6 @@ These were spotted and left alone on purpose.
 | --- | --- |
 | Put mocked users under `[development]` and add XSUAA under `[production]` | Only matters when deploying. Until then a deployed app would accept `chris` / `chris` from anyone. |
 | `@Capabilities` so the UI hides buttons the user can't use | `$metadata` is the same for every user, so a fixed `Deletable: false` would hide Delete from the admin too. Needs a per-row field instead. |
-| (Solution planned in step 11b: fill `employee_ID` when the draft is created.) `@mandatory` on `employee` fires before the CREATE handler fills in `employee_ID` | CAP runs checks in this order. Ask a senior before working around it. Confirmed 12 Oct: a normal user who leaves out `employee_ID` gets `400 ASSERT_MANDATORY` on `employee_ID`. This matters for the "create" button in the Fiori app. |
 | Comment in `srv/lib/expiry.js` saying "12 months is a scope decision" | Small; do it next time that file is touched. |
 | Reject reason (e.g. a `rejectionReason` field, required on Reject) | Decided 12 Oct: not now. |
 | Server warning: action `reject` clashes with CAP's built-in `reject` method | Harmless: the action works over HTTP (tested). CAP only skips creating a typed JS shortcut. Renaming (e.g. `rejectRecord`) would silence it, but changes the button and URL. |

@@ -121,6 +121,14 @@ Defined with `@restrict`. You must be logged in to use any service.
 
 Managers do not use AdminService. A read-only "My Team" app for managers is parked.
 
+**Creating and editing in the Certifications app** uses draft (`@odata.draft.enabled` on
+`EmployeeCertifications` in CertService). Create and Edit open a working copy; the rules
+in `cert-service.js` (`before CREATE` / `before UPDATE`) run when the user clicks Save. A
+new draft gets the logged-in employee filled in at once (`before NEW` on
+`EmployeeCertifications.drafts`), and the Employee field is read-only on the page. The
+certificate is picked from a value help on `Certifications`. A manager still sees an Edit
+button on team records; clicking it gives 403 (accepted for now).
+
 ## Where things are
 
 | File | What it does |
@@ -158,6 +166,9 @@ The OData service runs at `http://localhost:4004/odata/v4/cert/`.
 | Labels via `@Common.Label` + i18n, not inside `UI.LineItem` | One label per field, reused by the table, filter and object page |
 | Labels live on the database entities (`app/labels.cds`), not on a service | Every service built on the entities inherits them, so both apps share one set |
 | Action buttons use `@Core.OperationAvailable` with `$self.status.code`, and the server checks again | The UI only offers moves that are allowed; the server still blocks direct API calls. Inside annotation expressions write `status.code`; `status_code` does not compile there |
+| Draft on `EmployeeCertifications` in CertService only (15 Oct) | Fiori elements V4 shows Create / Edit only with draft. AdminService stays without draft: the admin changes records only through the actions |
+| The employee on a new record is filled in on `NEW` (draft start), not on Save (15 Oct) | `@mandatory` is checked before the CREATE handler runs, so filling it in on Save is too late (`ASSERT_MANDATORY`) |
+| Employee field read-only in the Certifications app for everyone, admins included (15 Oct) | This is the employee's own app. Assigning or correcting the person belongs in the Employees app. A per-user editable field (dynamic `FieldControl`) was prototyped and dropped as not needed |
 | Status is a code list (`Statuses : sap.common.CodeList`), not an enum (14 Oct) | Gives a dropdown in the filter bars, readable names ("Learning Journey"), translatable names later, and `@assert.target` rejects unknown codes. The codes stayed the same text, so no data changed |
 | Error messages name the field (`req.error(400, msg, "earnedOn")`) | Fiori highlights the wrong field in red |
 | Approve / reject / revoke go in a separate `AdminService` (admin only) | Keeps admin-only things out of the employee app |
@@ -173,7 +184,9 @@ The OData service runs at `http://localhost:4004/odata/v4/cert/`.
 - `story/admin-service` (from `fixes`): step 7, AdminService + docs. Pushed, finished.
 - `story/approvals-app` (from `story/admin-service`): step 8, the Approvals Fiori app.
   Merged into `main` and pushed (14 Oct, `main` at `86c14ac`).
-- `story/status-codelist` (from `main`): step 10, status as a code list. Current work.
+- `story/status-codelist` (from `main`): step 10, status as a code list. Merged into
+  `main` and pushed (15 Oct, `d79a20a`).
+- `story/draft` (from `main`): step 11, draft in the Certifications app. Current work.
 - New work goes on a `story/<short-name>` branch.
 - Commit messages follow the step numbers: `1`, `2`, `3a`, `3b` ... `6c`.
 - Pushing needs the `ghimire-ranjan` GitHub account. The `ranjan-ghimire` work account gets

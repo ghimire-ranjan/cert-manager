@@ -10,7 +10,32 @@ step, and start a new empty Unreleased section on top.
 
 ## Unreleased
 
-Branch `story/status-codelist` (from `main`).
+Branch `story/draft` (from `main`).
+
+- **11a/11b** (15 Oct, `71f75ed`) `@odata.draft.enabled` on `EmployeeCertifications` in
+  `srv/cert-service.cds`: the Certifications app now has Create and Edit. New handler
+  `before('NEW', EmployeeCertifications.drafts)` in `cert-service.js` fills in the
+  logged-in employee when a draft starts, for everyone. This solves the parked
+  `@mandatory` item (`ASSERT_MANDATORY` on `employee_ID` when saving a new draft).
+  The existing `before CREATE` / `before UPDATE` rules run on Save, unchanged.
+- **11c** (15 Oct, `61c27ce`) Object page shows `certificate_ID` with a value help on
+  `Certifications` (code, name) and `@Common.Text: certificate.name`, and `employee_ID`
+  with `@Common.Text: employee.name` and `@Common.FieldControl: #ReadOnly`.
+  `Certifications.ID` gets `@Common.Text: name` so the value help shows names. Lesson: a
+  path like `certificate.code` can only be shown, not picked; the editable field is the
+  link itself (`certificate_ID`).
+- **11d** (15 Oct) Tested in the browser: ranjan created a plan (Planned) and an earned
+  cert (Pending, valid until +1 year, 364 days); edit, self-verify message, 403 on
+  editing a Verified record, delete of a Planned record; chris gets himself filled in;
+  dan gets 403 on Edit of a team record. The Status filter shows "Learning Journey"
+  (closes 10g).
+- **11c+** prototyped and dropped: admin-only editable Employee field (dynamic
+  `FieldControl`). Not needed by the concept; notes kept in `docs/tasks/todo.md`.
+- **11e** Docs: parked `@mandatory` item removed, draft decisions in `docs/context.md`.
+
+## 15 Oct 2026: step 10, status as a code list
+
+Branch `story/status-codelist` (from `main`). Merged into `main` (`d79a20a`).
 
 - **10** (14 Oct, `5874b43`) Status is now a code list. `db/schema.cds`: the `Status` enum
   became `entity Statuses : sap.common.CodeList { key code }`, and
