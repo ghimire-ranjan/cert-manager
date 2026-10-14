@@ -133,6 +133,10 @@ Decisions (15 Oct, Ranjan agreed to Claude's suggestions):
       Pending), Edit own Planned, Edit button on own Verified fails, Delete own Planned.
       As chris: Create gets Chris filled in. As dan: Edit on a team record fails (403).
 - [x] **11e** Remove the parked `@mandatory` item (solved by 11b); update docs.
+- [ ] **Open question (15 Oct, for Ranjan):** may an employee delete their own `Pending`
+      record (withdraw a submission)? `srv/cert-service.cds` (DELETE rule) allows it;
+      `docs/context.md` says only `Planned` / `LearningJourney`. Decide, then make the
+      code or the docs match.
 
 ### Step 9: Employees app (admin)
 
