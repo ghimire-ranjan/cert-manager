@@ -121,6 +121,16 @@ Defined with `@restrict`. You must be logged in to use any service.
 
 Managers do not use AdminService. A read-only "My Team" app for managers is parked.
 
+**Employees and logins are separate.** An employee record (`userID`) only links data to a
+login name. Adding an employee in the app does **not** create a login: logins are the
+mocked users in `package.json` now, and the company login (XSUAA) after deployment.
+A new employee can log in only once a login with the same name exists.
+
+**Watch out when adding links to the database model:** a new association on a database
+entity appears in **every** service built on it. Check each service's `@restrict` rules,
+and use `excluding { … }` in a projection where a service must not offer the link
+(e.g. `certifications` on `Employees` in CertService, found 15 Oct).
+
 **Creating and editing in the Certifications app** uses draft (`@odata.draft.enabled` on
 `EmployeeCertifications` in CertService). Create and Edit open a working copy; the rules
 in `cert-service.js` (`before CREATE` / `before UPDATE`) run when the user clicks Save. A

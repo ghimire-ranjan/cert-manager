@@ -140,11 +140,56 @@ Decisions (15 Oct, Ranjan agreed to Claude's suggestions):
 
 ### Step 9: Employees app (admin)
 
-- [ ] Add a "to many" link from `Employees` to `EmployeeCertifications` in
-      `db/schema.cds`.
-- [ ] Fiori elements app on AdminService: employee list, and on each employee's page a
-      table of their certifications (with the same action buttons). Draft
-      (`@odata.draft.enabled`) and a value help on `manager`.
+Branch `story/employees-app` (from `main`, 15 Oct). Admin-only app on AdminService: list
+of employees; employee page with their details (editable, draft) and a table of their
+certifications with Approve / Reject / Revoke buttons.
+
+Decisions (15 Oct): certifications stay an **association** (independent records, not a
+composition); employees are **not deleted**, only deactivated (`active = false`);
+`userID` must be **unique**; manager picked from a value help by name, and nobody can be
+their own manager; Approve / Reject / Revoke **on the employee page's table** (Ranjan's
+request; cheap because the actions already exist).
+
+Prototype on a copy (15 Oct) passed: certifications through
+`Employees(…)/certifications`; approve and revoke through that link; edit + save an
+employee (draft); the certifications table still loads and approve still works while
+the employee is being edited; Approvals app unchanged; erik 403.
+
+- [ ] **9a** `db/schema.cds`: on `Employees` add
+      `certifications : Association to many EmployeeCertifications on certifications.employee = $self;`
+      (no new column) and `@assert.unique` on `userID`.
+- [ ] **9b** `srv/admin-service.cds`: `@odata.draft.enabled` on `Employees`; no delete
+      (`@Capabilities.DeleteRestrictions.Deletable: false`, check the server enforces it).
+      **Required, security:** `srv/cert-service.cds`:
+      `entity Employees as projection on my.Employees excluding { certifications };`.
+      Found 15 Oct: without it, erik reads anyone's records with
+      `/cert/Employees(dan)?$expand=certifications` (`@restrict` on
+      `EmployeeCertifications` does not cover rows pulled in through another entity's
+      link). Tested fix: erik gets 400, still sees his own 3 and all 5 employees; admin
+      link still works.
+- [ ] **9c** `srv/admin-service.js`: before CREATE / UPDATE on `Employees`, 400 if
+      `manager_ID` is the employee's own `ID`.
+- [ ] **9d** Generate `app/employees` with the Fiori wizard (List Report V4, local CAP,
+      AdminService, main entity `Employees`, no virtual endpoints), clear the generated
+      annotations, restart `cds watch`.
+- [ ] **9e** `app/employees/annotations.cds`: list columns and filters; object page
+      header and details; `manager` value help with names; a "Certifications" section
+      showing `certifications` with its own `UI.LineItem #ForEmployee` (code, name,
+      status, valid until, days left) + `UI.DataFieldForAction` approve / reject / revoke.
+      Check what Fiori requests for that table: Days Left works through
+      `Employees(…)/certifications` but is **empty through `$expand`** (the READ handlers
+      only run for `EmployeeCertifications` itself). If Fiori uses `$expand`, extend the
+      handler (prototype first). Manager value help: active employees only; list filter
+      defaults to active.
+- [ ] **9e+** Labels for `userID`, `email`, `active`, `manager` in `app/labels.cds` and
+      `_i18n/i18n.properties` (Claude may write the i18n texts).
+- [ ] **9f** Test as chris: list, edit an employee, self-manager error, duplicate userID
+      error, no Delete, approve / reject / revoke from the employee page; Approvals app
+      still fine; erik and dan get 403. Add requests for duplicate `userID`, own manager
+      and blocked Delete to `test/admin.http`, so they can be re-run.
+
+Later (own steps, not part of step 9):
+
 - [ ] **Change history** with `@cap-js/change-tracking`, shown on the object page.
 - [ ] **README**: replace the "Welcome to your new CAP project" text.
 - [ ] **Deploy to BTP**: real login (XSUAA), `xs-security.json`, MTA build.
