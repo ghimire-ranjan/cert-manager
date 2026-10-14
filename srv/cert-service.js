@@ -1,11 +1,6 @@
 const cds = require("@sap/cds");
-const {
-  today,
-  daysUntil,
-  criticality,
-  addOneYear,
-} = require("./lib/expiry.js");
-
+const { addOneYear } = require("./lib/expiry.js");
+const { addExpiryFields } = require("./lib/expiry-fields.js");
 
 // The set of statuses that only admins can set
 const ADMIN_SET = ["Verified", "Rejected"];
@@ -14,15 +9,25 @@ const ADMIN_SET = ["Verified", "Rejected"];
 function applyRules(req, data, stored) {
   if (data.earnedOn) {
     data.validUntil = addOneYear(data.earnedOn);
-    data.status = ADMIN_SET.includes(stored?.status) ? stored.status : "Pending";
+    data.status = ADMIN_SET.includes(stored?.status)
+      ? stored.status
+      : "Pending";
   } else {
     data.validUntil = null;
     if (!data.status) data.status = "Planned";
     if (!["Planned", "LearningJourney"].includes(data.status)) {
-      return req.error(400, `Status '${data.status}' needs an earnedOn date`, "earnedOn");
+      return req.error(
+        400,
+        `Status '${data.status}' needs an earnedOn date`,
+        "earnedOn",
+      );
     }
     if (!data.plannedFor) {
-      return req.error(400, `Status '${data.status}' needs a plannedFor date`, "plannedFor");
+      return req.error(
+        400,
+        `Status '${data.status}' needs a plannedFor date`,
+        "plannedFor",
+      );
     }
   }
 }
@@ -62,23 +67,7 @@ module.exports = class CertService extends cds.ApplicationService {
       req.data.status = merged.status;
     });
 
-    //Fill the virtual fields on every read
-    this.after("READ", EmployeeCertifications, (rows) => {
-      const now = today();
-      for (const row of rows) {
-        if (!row.validUntil) continue;
-        row.daysUntilExpiry = daysUntil(row.validUntil, now);
-        row.expiryCriticality = criticality(row.daysUntilExpiry);
-      }
-    });
-
-    // Virtual fields are calculated from validUntil, so always read it
-    this.before("READ", EmployeeCertifications, (req) => {
-      const columns = req.query.SELECT.columns;
-      if (columns && !columns.some((c) => c.ref?.[0] === "validUntil")) {
-        columns.push({ ref: ["validUntil"] });
-      }
-    });
+    addExpiryFields(this, EmployeeCertifications);
 
 
     return super.init();

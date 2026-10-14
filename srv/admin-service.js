@@ -1,4 +1,5 @@
 const cds = require("@sap/cds");
+const { addExpiryFields } = require("./lib/expiry-fields.js");
 
 async function changeStatus(req, oldStatus, newStatus) {
   const record = await SELECT.one.from(req.subject);
@@ -28,6 +29,8 @@ module.exports = class AdminService extends cds.ApplicationService {
     this.on("revoke", EmployeeCertifications, (req) =>
       changeStatus(req, ["Verified", "Rejected"], "Pending"),
     );
+    addExpiryFields(this, EmployeeCertifications);
+
     return super.init();
   }
 };
