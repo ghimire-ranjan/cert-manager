@@ -142,6 +142,20 @@ records, and Days Left is filled in.
 - **Source:** Ranjan's study guide of SAP's video series "CAP in the Age of AI" (Expert
   Session #6 and Episodes 1-5): `@cap-js/mcp`, then `@cap-js/agents` for A2A.
 
+**AI agent (A2A, step 13).** `@agent` on CertService (plugin `@cap-js/agents`, beta 0.9.x)
+makes it an agent that other agents and chat UIs can talk to in plain language, at
+`/a2a/cert` (agent card at `/a2a/cert/.well-known/agent-card.json`, built-in chat at
+`/a2a/cert/preview`). The model runs **inside the CAP app** and uses the MCP tools
+(`describe`, `query`), so the same login and rules apply. Which model is
+`cds.requires.llm`, per profile in `package.json`:
+
+- plain `cds watch` (`[development]`): `llm-mock`, a fake model with a fixed answer (free;
+  proves the setup, no real answers).
+- `cds watch --profile free-llm`: kind `openai` (any OpenAI-compatible provider). The
+  address and key are set **only in the terminal**: `$env:OPENAI_BASE_URL`,
+  `$env:OPENAI_API_KEY`. Never put a key in a project file.
+- Later `[hybrid]` / production: `aicore` (SAP AI Core, the company route).
+
 **Employees and logins are separate.** An employee record (`userID`) only links data to a
 login name. Adding an employee in the app does **not** create a login: logins are the
 mocked users in `package.json` now, and the company login (XSUAA) after deployment.

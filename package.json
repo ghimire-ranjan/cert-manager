@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "type": "commonjs",
   "dependencies": {
+    "@cap-js/agents": "^0.9.8",
     "@cap-js/mcp": "^1.5.0",
     "@sap/cds": "^10"
   },
@@ -54,9 +55,22 @@
           "yves": false,
           "*": false
         }
+      },
+      "[free-llm]": {
+        "llm": {
+          "kind": "openai",
+          "model": "openai/gpt-oss-120b"
+        }
+      },
+      "[development]": {
+        "llm": {
+          "kind": "llm-mock"
+        }
       }
     }
   },
+
+  
   "workspaces": [
     "app/*"
   ],

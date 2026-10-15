@@ -10,7 +10,22 @@ step, and start a new empty Unreleased section on top.
 
 ## Unreleased
 
-Branch `story/mcp` (from `main`).
+Branch `story/a2a` (from `main`).
+
+- **13a** (15 Oct) `@cap-js/agents` 0.9.8 added; `srv/cert-mcp.cds` now
+  `annotate CertService with @agent @mcp @odata;` -> A2A endpoint `/a2a/cert`, agent card,
+  chat preview. `package.json`: `[development]` llm `llm-mock` (works around a plugin bug:
+  the default `auto` asks for kind `mock`, which the plugin calls `llm-mock`) and
+  `[free-llm]` llm kind `openai` for an OpenAI-compatible free provider (key and address
+  only in terminal env vars). Tested: mock loop completes; no login 401. Real model not
+  working yet: Gemini 3 needs thought signatures the plugin drops; Gemini 2.5 Flash closed
+  to new users; Ollama not allowed; no AI Core instance yet. Groq is the next try.
+  Lessons: `[developemnt]` (typo) was silently ignored, `cds env requires.llm` shows the
+  effective setting.
+
+## 15 Oct 2026: step 12, MCP
+
+Branch `story/mcp` (from `main`). Merged into `main` (`2bb0079`).
 
 - **12b, switch** (15 Oct) The hand-made `mcp/` server (below) is **removed** and replaced
   by SAP's official plugin **`@cap-js/mcp`** (beta, 1.5.x), as taught in SAP's "CAP in the

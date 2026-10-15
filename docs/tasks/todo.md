@@ -239,12 +239,36 @@ A2A lets other AI agents talk to an agent that uses the step 12 tools, e.g. an H
 learning agent asking "who in Dan's team needs to renew this quarter?". Needs step 12
 first: the agent needs tools before other agents can use it.
 
-- [ ] **13a** Design session after step 12 works: which agent, which other agents talk
-      to it, and what they may ask. Per the study guide: SAP's `@cap-js/agents` plugin
-      (beta, A2A 0.3.0) turns a CAP service into an agent (`@agent`) and **reuses the
-      `@cap-js/mcp` tools**; the LLM loop runs inside the CAP app, so it needs an LLM
-      connection. Add the doc comments (12c) at the same time.
-- [ ] **13b** Prototype, build, test, document.
+- [x] **13a** Agent set up (15 Oct, branch `story/a2a`): `@cap-js/agents` 0.9.8 (beta) and
+      `@agent` next to `@mcp @odata` on CertService. Endpoint `/a2a/cert`, agent card
+      `/a2a/cert/.well-known/agent-card.json`, chat preview `/a2a/cert/preview`. Login
+      applies (401 without). Plugin bug (0.9.7 and 0.9.8): the default `llm: "auto"`
+      resolves to kind `mock`, but the plugin registers it as `llm-mock`, so the agent
+      fails with "No service implementation found for llm". Fix: `"[development]": {
+      "llm": { "kind": "llm-mock" } }`. With the mock, the full loop runs (tool call ->
+      data -> fixed answer). Real model: local models (Ollama) not allowed on the
+      company laptop; AI Core not in the DalRae AI subaccount (only AI Launchpad; ask
+      the BTP admin for an `extended` AI Core instance). Free cloud tier tried:
+      Gemini 3 fails (the plugin's `openai` kind drops Gemini's "thought signatures" on
+      tool calls), Gemini 2.5 Flash is no longer available to new users. Next to try:
+      Groq (profile `[free-llm]`, kind `openai`, model `openai/gpt-oss-120b`, key and
+      base URL only as terminal env vars `OPENAI_API_KEY` / `OPENAI_BASE_URL`).
+
+Features (agreed 15 Oct, in this order; A-C can be tested in the MCP Inspector without a
+real model):
+
+- [ ] **13b (A)** Doc comments on CertService entities and fields (was 12c), so the AI
+      understands the data (status meanings, validUntil = earnedOn + 1 year, negative
+      days left = expired). Check with the Inspector's `describe`.
+- [ ] **13c (B)** Employee actions for the AI: unbound `planCertification(code,
+      plannedFor)` and `submitCertification(code, earnedOn, evidenceUrl)`. The MCP plugin
+      only exposes **unbound** actions (`call` tool), so these are new; they must run
+      through the existing rules (`applyRules`, `@restrict`, own employee only).
+- [ ] **13d (C)** Admin actions for the AI: unbound approve / reject by employee and code,
+      reusing `changeStatus`; MCP on AdminService (admin only).
+- [ ] **13e (D)** Agent instructions (the agent's job and rules). Needs a real model.
+- [ ] **13f (E)** Human in the loop (`@agent.hitl`): confirm before any change. Needs a
+      real model.
 
 ## 3. Parked on purpose
 
