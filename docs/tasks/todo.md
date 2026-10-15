@@ -206,21 +206,27 @@ Ranjan's plan (14 Oct). MCP (Model Context Protocol) lets an AI assistant call t
 agreed 14 Oct: draft first (done, step 11), then MCP, then A2A, because each builds on
 the one before.
 
-- [ ] **12a** Design session first (domain-modeling + grilling, per Ranjan's CLAUDE.md):
-      which tools, for whom, and why. Open questions below.
-- [ ] **12b** Prototype: an MCP server that calls the CAP services **as the logged-in
-      user**, so `@restrict` and the business rules still apply (no tool gets more rights
-      than the user has).
-- [ ] **12c** Build, test, document.
+- [x] **12a** Short design (15 Oct): Ranjan chose "set it up and get it running first"
+      over a full design session. Answers in the table below.
+- [x] **12b** Read-only MCP server in `mcp/` (15 Oct, written by Claude at Ranjan's
+      request, reviewed by Ranjan): tools `who_am_i`, `list_certifications` (filters:
+      expiring within N days, status, employee name), `list_catalogue`. Calls CertService
+      over HTTP as one user (`CERT_USER` / `CERT_PASSWORD`), so `@restrict` decides what
+      each user sees. Tested as erik (3 own), dan (9: own + team), chris (all), unknown
+      user (401), against a copy and against the running app.
+- [ ] **12c** Connect it to Claude Code (`claude mcp add …`, see `docs/context.md`) and
+      try the demo questions as erik, dan and chris.
+- [ ] **12d** Write tools (after 12c): e.g. plan / submit a certification (employee),
+      approve / reject (admin, through AdminService). Prototype first.
 
 Open questions (owner: Ranjan, raised 14 Oct):
 
 | Question | Answer |
 | --- | --- |
-| What is the goal: learning the technology, a demo for Atturra, or a real feature for the team? | Open |
-| Which tools first (read-only like "my expiring certs", or also writes like "submit a cert")? | Open |
-| Who uses it: employees only, or also the admin (e.g. "approve all Pending")? | Open |
-| Where does it run: locally with Claude Code / Claude Desktop, or deployed with the app on BTP? | Open |
+| What is the goal: learning the technology, a demo for Atturra, or a real feature for the team? | **A demo now, built so it can become a real team feature later** (Ranjan, 15 Oct) |
+| Which tools first (read-only like "my expiring certs", or also writes like "submit a cert")? | **Reading first; changing data (submit, approve) only after reading works** (Ranjan, 15 Oct) |
+| Who uses it: employees only, or also the admin (e.g. "approve all Pending")? | **Both employees and admins**, each seeing only what the app already allows them (Ranjan, 15 Oct) |
+| Where does it run: locally with Claude Code / Claude Desktop, or deployed with the app on BTP? | **Laptop for the demo** (Claude suggestion, Ranjan to confirm 15 Oct). The MCP server calls the app's OData API **as the logged-in user** (not the database), so `@restrict` and the rules still apply and moving to BTP later means changing the address and the login, not the tools |
 
 ### Step 13: A2A (agent-to-agent)
 

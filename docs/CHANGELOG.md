@@ -10,7 +10,22 @@ step, and start a new empty Unreleased section on top.
 
 ## Unreleased
 
-Branch `story/employees-app` (from `main`).
+Branch `story/mcp` (from `main`).
+
+- **12a/12b** (15 Oct) New `mcp/` folder: an MCP server (`server.js`, own `package.json`
+  with `@modelcontextprotocol/sdk` 1.31.0 and `zod` 4; libraries agreed by Ranjan) with
+  read-only tools `who_am_i`, `list_certifications` and `list_catalogue`. It calls
+  CertService over HTTP as one user (`CERT_USER` / `CERT_PASSWORD`), so the app's
+  `@restrict` rules decide what each user sees; no security code in the MCP server.
+  Filters use the stored `validUntil` (days left is virtual and cannot be filtered).
+  Written by Claude at Ranjan's request (exception to the CLAUDE.md rule). Tested as erik
+  (3 own records), dan (9: own + team), chris (all), unknown user (401). Decisions: demo
+  on the laptop now, built so it can move to BTP later; reading first, writing next;
+  employees and admins both use it.
+
+## 15 Oct 2026: step 9, Employees app
+
+Branch `story/employees-app` (from `main`). Merged into `main` (`91a6a1b`).
 
 - **9a-9c** (15 Oct, `81b2b1f`) `db/schema.cds`: `Employees` gets
   `certifications : Association to many EmployeeCertifications on certifications.employee = $self`
