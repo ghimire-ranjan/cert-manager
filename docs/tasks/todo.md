@@ -155,10 +155,10 @@ Prototype on a copy (15 Oct) passed: certifications through
 employee (draft); the certifications table still loads and approve still works while
 the employee is being edited; Approvals app unchanged; erik 403.
 
-- [ ] **9a** `db/schema.cds`: on `Employees` add
+- [x] **9a** `db/schema.cds`: on `Employees` add
       `certifications : Association to many EmployeeCertifications on certifications.employee = $self;`
       (no new column) and `@assert.unique` on `userID`.
-- [ ] **9b** `srv/admin-service.cds`: `@odata.draft.enabled` on `Employees`; no delete
+- [x] **9b** `srv/admin-service.cds`: `@odata.draft.enabled` on `Employees`; no delete
       (`@Capabilities.DeleteRestrictions.Deletable: false`, check the server enforces it).
       **Required, security:** `srv/cert-service.cds`:
       `entity Employees as projection on my.Employees excluding { certifications };`.
@@ -167,8 +167,11 @@ the employee is being edited; Approvals app unchanged; erik 403.
       `EmployeeCertifications` does not cover rows pulled in through another entity's
       link). Tested fix: erik gets 400, still sees his own 3 and all 5 employees; admin
       link still works.
-- [ ] **9c** `srv/admin-service.js`: before CREATE / UPDATE on `Employees`, 400 if
-      `manager_ID` is the employee's own `ID`.
+- [x] **9c** `srv/admin-service.js`: before CREATE / UPDATE on `Employees`, 400 if
+      `manager_ID` is the employee's own `ID`, and 400 (on field `userID`) if another
+      employee already has that `userID`. Tested 15 Oct: `@assert.unique` alone does
+      block a duplicate, but as a database error (`UNIQUE constraint failed…`, HTTP 500);
+      keep it as the safety net, the handler gives the readable message.
 - [ ] **9d** Generate `app/employees` with the Fiori wizard (List Report V4, local CAP,
       AdminService, main entity `Employees`, no virtual endpoints), clear the generated
       annotations, restart `cds watch`.

@@ -17,12 +17,17 @@ entity Certifications : cuid, managed {
     issuer : String(50);
 }
 
+// userID is the login name, so no two employees may share it
+@assert.unique: {userID: [userID]}
 entity Employees : cuid, managed {
-    userID  : String(50)  @mandatory;
-    name    : String(100) @mandatory;
-    email   : String(100);
-    active  : Boolean default true;
-    manager : Association to Employees;
+    userID         : String(50)  @mandatory;
+    name           : String(100) @mandatory;
+    email          : String(100);
+    active         : Boolean default true;
+    manager        : Association to Employees;
+    // All records of this employee (looks back along employee_ID, adds no column)
+    certifications : Association to many EmployeeCertifications
+                         on certifications.employee = $self;
 }
 
 

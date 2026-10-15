@@ -2,6 +2,9 @@ using {cert.manager as my} from '../db/schema';
 
 @requires: 'admin'
 service AdminService {
+    // Employees are edited with draft and never deleted (set active = false instead)
+    @odata.draft.enabled
+    @Capabilities.DeleteRestrictions.Deletable: false
     entity Employees              as projection on my.Employees;
 
     @readonly

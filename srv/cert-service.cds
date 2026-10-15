@@ -27,7 +27,8 @@ service CertService {
             to   : 'admin'
         }
     ]
-    entity Employees              as projection on my.Employees;
+    // No 'certifications' link here: through it, anyone could $expand other people's records
+    entity Employees              as projection on my.Employees excluding { certifications };
 
     @restrict: [
         {
