@@ -257,7 +257,7 @@ first: the agent needs tools before other agents can use it.
 Features (agreed 15 Oct, in this order; A-C can be tested in the MCP Inspector without a
 real model):
 
-- [ ] **13b (A)** Doc comments on CertService entities and fields (was 12c), so the AI
+- [x] **13b (A)** Doc comments on CertService entities and fields (was 12c), so the AI
       understands the data (status meanings, validUntil = earnedOn + 1 year, negative
       days left = expired). Check with the Inspector's `describe`.
 - [ ] **13c (B)** Employee actions for the AI: unbound `planCertification(code,

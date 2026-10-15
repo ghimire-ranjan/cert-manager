@@ -12,6 +12,14 @@ step, and start a new empty Unreleased section on top.
 
 Branch `story/a2a` (from `main`).
 
+- **13b (A)** (15 Oct) New `srv/cert-docs.cds`: doc comments (`/** … */` via `annotate`) on
+  CertService's EmployeeCertifications, Certifications and Employees and their fields,
+  so AI assistants understand the data (status lifecycle, validUntil = earnedOn + 1 year,
+  "filter on validUntil, not daysUntilExpiry", who sees which rows, userID = login).
+  Written by Claude at Ranjan's request. Checked: the MCP `describe` tool shows them
+  (as "Label. Description"). Tested on a copy: an element doc comment written directly in
+  `db/schema.cds` did not show up, `annotate` in a separate file did.
+
 - **13a** (15 Oct) `@cap-js/agents` 0.9.8 added; `srv/cert-mcp.cds` now
   `annotate CertService with @agent @mcp @odata;` -> A2A endpoint `/a2a/cert`, agent card,
   chat preview. `package.json`: `[development]` llm `llm-mock` (works around a plugin bug:
