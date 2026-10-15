@@ -10,7 +10,36 @@ step, and start a new empty Unreleased section on top.
 
 ## Unreleased
 
-Branch `story/draft` (from `main`).
+Branch `story/employees-app` (from `main`).
+
+- **9a-9c** (15 Oct, `81b2b1f`) `db/schema.cds`: `Employees` gets
+  `certifications : Association to many EmployeeCertifications on certifications.employee = $self`
+  (no new column) and `@assert.unique` on `userID`. `srv/admin-service.cds`: draft on
+  `Employees`, `@Capabilities.DeleteRestrictions.Deletable: false` (the server answers 405,
+  not just a hidden button). `srv/cert-service.cds`: `Employees … excluding { certifications }`
+  (**security**: without it erik could `$expand` anyone's records; `@restrict` on
+  `EmployeeCertifications` does not cover rows pulled in through another entity's link).
+  `srv/admin-service.js`: `checkEmployee` gives readable 400s for "own manager" and
+  "login already used" (`@assert.unique` alone gives a database 500). Written by Claude at
+  Ranjan's request (one-off exception to the CLAUDE.md rule), checked by Ranjan.
+- **9d** (`9a2c2b9`) Employees app generated in `app/employees` (List Report V4 on
+  AdminService); annotations started empty this time.
+- **9e** (`a99e795`, `8d96707`, `fe5f92f`) List page (name, login, email, manager,
+  active; filters), object page Details section, manager value help with only active
+  employees (`ValueListParameterConstant` on `active`), and a Certifications section
+  (`certifications/@UI.LineItem#ForEmployee`) with Days Left and Approve / Reject /
+  Revoke buttons (`UI.DataFieldForAction` in the table; `@Core.OperationAvailable` from
+  step 8 applies here too). Labels for the employee fields; i18n key `EmployeeLogin`.
+  Lessons: the i18n key `UserID` clashes with CAP's built-in text (`User ID` won);
+  `@Common.Text` on the key `ID` of an entity that is created in the app makes Fiori ask
+  for the key (a GUID) in a "New Object" dialog, so it was removed.
+- **9f** (15 Oct) Browser tests passed as chris (approve / revoke from the employee page,
+  same status in Approvals, duplicate login and own-manager errors, John Doe not in the
+  manager picker, no Delete); erik and dan get 403.
+
+## 15 Oct 2026: step 11, draft in the Certifications app
+
+Branch `story/draft` (from `main`). Merged into `main` (`2624807`).
 
 - **11a/11b** (15 Oct, `71f75ed`) `@odata.draft.enabled` on `EmployeeCertifications` in
   `srv/cert-service.cds`: the Certifications app now has Create and Edit. New handler

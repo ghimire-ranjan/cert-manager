@@ -186,7 +186,8 @@ the employee is being edited; Approvals app unchanged; erik 403.
       defaults to active.
 - [x] **9e+** Labels for `userID`, `email`, `active`, `manager` in `app/labels.cds` and
       `_i18n/i18n.properties` (Claude may write the i18n texts).
-- [ ] **9f** Test as chris: list, edit an employee, self-manager error, duplicate userID
+- [x] **9f** (browser tests passed 15 Oct; the `test/admin.http` requests are still to
+      write) Test as chris: list, edit an employee, self-manager error, duplicate userID
       error, no Delete, approve / reject / revoke from the employee page; Approvals app
       still fine; erik and dan get 403. Add requests for duplicate `userID`, own manager
       and blocked Delete to `test/admin.http`, so they can be re-run.
