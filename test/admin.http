@@ -2,6 +2,8 @@
 @admin  = {{server}}/odata/v4/admin
 @cert   = {{server}}/odata/v4/cert
 @erik004 = a0000000-0000-0000-0000-000000000004
+@dan     = e0000000-0000-0000-0000-000000000002
+@john    = e0000000-0000-0000-0000-000000000005
 
 # Run the requests in order, top to bottom, right after starting `npx cds watch`.
 # The database is in memory, so restarting the server resets all the data.
@@ -59,3 +61,65 @@ Authorization: Basic chris:chris
 Content-Type: application/json
 
 {}
+
+# ---- Employees app (step 9). Employees use draft: create/edit a draft, change it, save it.
+
+### 10. Delete an employee -> 405, employees are never deleted (set active = false instead)
+DELETE {{admin}}/Employees(ID={{john}},IsActiveEntity=true)
+Authorization: Basic chris:chris
+
+### 11a. New employee draft -> 201
+# @name newEmployee
+POST {{admin}}/Employees
+Authorization: Basic chris:chris
+Content-Type: application/json
+
+{}
+
+### 11b. Give it the login "erik", which Erik already has -> 200 (drafts are not checked yet)
+PATCH {{admin}}/Employees(ID={{newEmployee.response.body.ID}},IsActiveEntity=false)
+Authorization: Basic chris:chris
+Content-Type: application/json
+
+{"userID": "erik", "name": "Erik Two"}
+
+### 11c. Save it -> 400, "Login 'erik' is already used by Erik"
+POST {{admin}}/Employees(ID={{newEmployee.response.body.ID}},IsActiveEntity=false)/AdminService.draftActivate
+Authorization: Basic chris:chris
+Content-Type: application/json
+
+{}
+
+### 11d. Clean up: discard the draft -> 204
+DELETE {{admin}}/Employees(ID={{newEmployee.response.body.ID}},IsActiveEntity=false)
+Authorization: Basic chris:chris
+
+### 12a. Edit Dan (creates a draft) -> 201
+POST {{admin}}/Employees(ID={{dan}},IsActiveEntity=true)/AdminService.draftEdit
+Authorization: Basic chris:chris
+Content-Type: application/json
+
+{"PreserveChanges": true}
+
+### 12b. Make Dan his own manager -> 200 (drafts are not checked yet)
+PATCH {{admin}}/Employees(ID={{dan}},IsActiveEntity=false)
+Authorization: Basic chris:chris
+Content-Type: application/json
+
+{"manager_ID": "{{dan}}"}
+
+### 12c. Save it -> 400, "An employee can't be their own manager"
+POST {{admin}}/Employees(ID={{dan}},IsActiveEntity=false)/AdminService.draftActivate
+Authorization: Basic chris:chris
+Content-Type: application/json
+
+{}
+
+### 12d. Clean up: discard the draft -> 204
+DELETE {{admin}}/Employees(ID={{dan}},IsActiveEntity=false)
+Authorization: Basic chris:chris
+
+### 13. Erik tries to read Dan's records through the employee link -> 400
+# The 'certifications' link is left out of CertService on purpose (security, step 9b)
+GET {{cert}}/Employees({{dan}})?$expand=certifications
+Authorization: Basic erik:erik

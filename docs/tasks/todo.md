@@ -1,6 +1,6 @@
 # To do
 
-Last updated: 2026-10-14
+Last updated: 2026-10-15
 
 ## 1. Done: saving with an `earnedOn` date was broken (fixed 12 Oct)
 
@@ -186,8 +186,9 @@ the employee is being edited; Approvals app unchanged; erik 403.
       defaults to active.
 - [x] **9e+** Labels for `userID`, `email`, `active`, `manager` in `app/labels.cds` and
       `_i18n/i18n.properties` (Claude may write the i18n texts).
-- [x] **9f** (browser tests passed 15 Oct; the `test/admin.http` requests are still to
-      write) Test as chris: list, edit an employee, self-manager error, duplicate userID
+- [x] **9f** (browser tests passed 15 Oct; `test/admin.http` requests 10-13 added and
+      checked the same day: delete 405, duplicate login 400, own manager 400, erik's
+      `$expand` 400) Test as chris: list, edit an employee, self-manager error, duplicate userID
       error, no Delete, approve / reject / revoke from the employee page; Approvals app
       still fine; erik and dan get 403. Add requests for duplicate `userID`, own manager
       and blocked Delete to `test/admin.http`, so they can be re-run.
@@ -197,6 +198,39 @@ Later (own steps, not part of step 9):
 - [ ] **Change history** with `@cap-js/change-tracking`, shown on the object page.
 - [ ] **README**: replace the "Welcome to your new CAP project" text.
 - [ ] **Deploy to BTP**: real login (XSUAA), `xs-security.json`, MTA build.
+
+### Step 12: MCP (AI assistant tools on top of the app)
+
+Ranjan's plan (14 Oct). MCP (Model Context Protocol) lets an AI assistant call the app as
+"tools", e.g. "which of my certifications expire soon?" or "submit my C_CPE pass". Order
+agreed 14 Oct: draft first (done, step 11), then MCP, then A2A, because each builds on
+the one before.
+
+- [ ] **12a** Design session first (domain-modeling + grilling, per Ranjan's CLAUDE.md):
+      which tools, for whom, and why. Open questions below.
+- [ ] **12b** Prototype: an MCP server that calls the CAP services **as the logged-in
+      user**, so `@restrict` and the business rules still apply (no tool gets more rights
+      than the user has).
+- [ ] **12c** Build, test, document.
+
+Open questions (owner: Ranjan, raised 14 Oct):
+
+| Question | Answer |
+| --- | --- |
+| What is the goal: learning the technology, a demo for Atturra, or a real feature for the team? | Open |
+| Which tools first (read-only like "my expiring certs", or also writes like "submit a cert")? | Open |
+| Who uses it: employees only, or also the admin (e.g. "approve all Pending")? | Open |
+| Where does it run: locally with Claude Code / Claude Desktop, or deployed with the app on BTP? | Open |
+
+### Step 13: A2A (agent-to-agent)
+
+A2A lets other AI agents talk to an agent that uses the step 12 tools, e.g. an HR or
+learning agent asking "who in Dan's team needs to renew this quarter?". Needs step 12
+first: the agent needs tools before other agents can use it.
+
+- [ ] **13a** Design session after step 12 works: which agent, which other agents talk
+      to it, and what they may ask.
+- [ ] **13b** Prototype, build, test, document.
 
 ## 3. Parked on purpose
 
