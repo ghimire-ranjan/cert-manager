@@ -175,7 +175,7 @@ the employee is being edited; Approvals app unchanged; erik 403.
 - [x] **9d** Generate `app/employees` with the Fiori wizard (List Report V4, local CAP,
       AdminService, main entity `Employees`, no virtual endpoints), clear the generated
       annotations, restart `cds watch`.
-- [ ] **9e** `app/employees/annotations.cds`: list columns and filters; object page
+- [x] **9e** `app/employees/annotations.cds`: list columns and filters; object page
       header and details; `manager` value help with names; a "Certifications" section
       showing `certifications` with its own `UI.LineItem #ForEmployee` (code, name,
       status, valid until, days left) + `UI.DataFieldForAction` approve / reject / revoke.
@@ -184,7 +184,7 @@ the employee is being edited; Approvals app unchanged; erik 403.
       only run for `EmployeeCertifications` itself). If Fiori uses `$expand`, extend the
       handler (prototype first). Manager value help: active employees only; list filter
       defaults to active.
-- [ ] **9e+** Labels for `userID`, `email`, `active`, `manager` in `app/labels.cds` and
+- [x] **9e+** Labels for `userID`, `email`, `active`, `manager` in `app/labels.cds` and
       `_i18n/i18n.properties` (Claude may write the i18n texts).
 - [ ] **9f** Test as chris: list, edit an employee, self-manager error, duplicate userID
       error, no Delete, approve / reject / revoke from the employee page; Approvals app
