@@ -260,7 +260,7 @@ real model):
 - [x] **13b (A)** Doc comments on CertService entities and fields (was 12c), so the AI
       understands the data (status meanings, validUntil = earnedOn + 1 year, negative
       days left = expired). Check with the Inspector's `describe`.
-- [ ] **13c (B)** Employee actions for the AI: unbound `planCertification(code,
+- [x] **13c (B)** Employee actions for the AI: unbound `planCertification(code,
       plannedFor)` and `submitCertification(code, earnedOn, evidenceUrl)`. The MCP plugin
       only exposes **unbound** actions (`call` tool), so these are new; they must run
       through the existing rules (`applyRules`, `@restrict`, own employee only).

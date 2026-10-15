@@ -72,4 +72,29 @@ service CertService {
     @readonly
     entity Statuses               as projection on my.Statuses;
 
+
+
+    // Actions for AI assistants. Unbound (not tied to one record), so the MCP plugin
+   
+
+    /** Plan to take a certification exam: creates a Planned record for the logged-in employee. */
+    action planCertification(
+        /** SAP exam code, e.g. C_FIORD */
+        code       : String,
+        /** Target date for passing the exam, e.g. 2027-03-01 */
+        plannedFor : Date
+    ) returns EmployeeCertifications;
+
+    /** Record a passed exam for the logged-in employee. Updates their Planned or
+        LearningJourney record for this code if there is one, otherwise creates a new one.
+        The record becomes Pending (waiting for admin review); validUntil is set automatically. */
+    action submitCertification(
+        /** SAP exam code, e.g. C_SAC */
+        code        : String,
+        /** Date the exam was passed, e.g. 2026-10-10 */
+        earnedOn    : Date,
+        /** Link to proof, e.g. a Credly badge; must start with https:// */
+        evidenceUrl : String
+    ) returns EmployeeCertifications;
+
 }

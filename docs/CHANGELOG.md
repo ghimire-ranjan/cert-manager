@@ -12,6 +12,19 @@ step, and start a new empty Unreleased section on top.
 
 Branch `story/a2a` (from `main`).
 
+- **13c (B)** (15 Oct, written by Ranjan) Unbound actions on CertService for AI
+  assistants: `planCertification(code, plannedFor)` and `submitCertification(code,
+  earnedOn, evidenceUrl)`, with doc comments the AI reads. The MCP plugin now offers a
+  third tool, `call`. Handlers in `cert-service.js` (`this.on(...)`) find the
+  certification by code and create / update through `this.run(...)`, so the normal
+  CREATE / UPDATE rules run (applyRules, own employee only); submit updates an existing
+  Planned / LearningJourney record for that code instead of creating a second one.
+  Own check for `https://` evidence links (the `@assert.format` error reached MCP only as
+  "undefined"). Tested in the MCP Inspector as ranjan: plan C_AIG -> Planned; submit C_AIG
+  -> same record Pending, validUntil 2027-10-10, plannedFor kept; http:// link -> 400 with
+  a clear message; unknown code -> 404. Lessons: the `call` tool takes `{ action,
+  parameters: { ... } }` (without `parameters` every input is undefined); a stray character
+  in a `.cds` file leaves `cds watch` on the old model.
 - **13b (A)** (15 Oct) New `srv/cert-docs.cds`: doc comments (`/** … */` via `annotate`) on
   CertService's EmployeeCertifications, Certifications and Employees and their fields,
   so AI assistants understand the data (status lifecycle, validUntil = earnedOn + 1 year,
