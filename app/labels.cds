@@ -26,7 +26,7 @@ annotate my.Certifications with {
 };
 
 annotate my.Employees with {
-    userID  @Common.Label: '{i18n>UserID}';
+    userID  @Common.Label: '{i18n>EmployeeLogin}';
     name    @Common.Label: '{i18n>EmployeeName}';
     email   @Common.Label: '{i18n>Email}';
     active  @Common.Label: '{i18n>Active}';
