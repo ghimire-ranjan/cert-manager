@@ -172,7 +172,7 @@ the employee is being edited; Approvals app unchanged; erik 403.
       employee already has that `userID`. Tested 15 Oct: `@assert.unique` alone does
       block a duplicate, but as a database error (`UNIQUE constraint failed…`, HTTP 500);
       keep it as the safety net, the handler gives the readable message.
-- [ ] **9d** Generate `app/employees` with the Fiori wizard (List Report V4, local CAP,
+- [x] **9d** Generate `app/employees` with the Fiori wizard (List Report V4, local CAP,
       AdminService, main entity `Employees`, no virtual endpoints), clear the generated
       annotations, restart `cds watch`.
 - [ ] **9e** `app/employees/annotations.cds`: list columns and filters; object page
