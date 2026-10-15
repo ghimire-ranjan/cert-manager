@@ -121,19 +121,26 @@ Defined with `@restrict`. You must be logged in to use any service.
 
 Managers do not use AdminService. A read-only "My Team" app for managers is parked.
 
-**AI assistant (MCP, step 12).** `mcp/server.js` lets Claude Code (or Claude Desktop)
-answer questions like "which of my certifications expire in the next 30 days?". It logs
-in to the app as **one user** and calls CertService, so it sees exactly what that user
-sees in the Certifications app. Tools: `who_am_i`, `list_certifications`,
-`list_catalogue` (read-only for now). Setup, once (`npm install` in `mcp/` first):
+**AI assistant (MCP, step 12).** CertService is also served over MCP at `/mcp/cert`, using
+SAP's official plugin `@cap-js/mcp` (beta, 1.5.x) and one line in `srv/cert-mcp.cds`:
+`annotate CertService with @mcp @odata;` (keep `@odata`, or the Fiori apps stop working).
+An AI assistant (Claude Code, or the MCP Inspector) gets two tools: `describe` (what data
+exists) and `query` (a read-only CQL `SELECT`; anything else is rejected). It runs the
+normal CAP service, so `@restrict` and the handlers apply: as ranjan it sees only ranjan's
+records, and Days Left is filled in.
 
-```powershell
-claude mcp add cert-manager -e CERT_USER=erik -e CERT_PASSWORD=erik -- node C:/Users/RanjanGhimire/Projects/cert-manager/mcp/server.js
-```
-
-`npx cds watch` must be running. To switch user: `claude mcp remove cert-manager`, then
-add it again with another user, and start a new Claude Code session. `CERT_API` (default
-`http://localhost:4004/odata/v4/cert`) is the address to change when moving to BTP.
+- **Autowire:** while `cds watch` runs, the plugin writes an entry `cds:CertService` into
+  `~/.claude.json` (Claude Code's config) and removes it on stop. The user it logs in as
+  is `cds.mcp.autowire` in `package.json` (now `ranjan` / `ranjan`; the default `alice` is
+  disabled here). To switch user: change it, restart `cds watch`, open a **new** Claude
+  Code session.
+- **MCP Inspector** (the tool from SAP's video series) to try the tools by hand:
+  `npx @modelcontextprotocol/inspector@1.0.2` (version 1, as the guide recommends; without
+  the version you get version 2, which also works). Connect with Streamable HTTP, URL
+  `http://localhost:4004/mcp/cert`, header `Authorization: Basic <base64 of user:password>`
+  (ranjan = `cmFuamFuOnJhbmphbg==`).
+- **Source:** Ranjan's study guide of SAP's video series "CAP in the Age of AI" (Expert
+  Session #6 and Episodes 1-5): `@cap-js/mcp`, then `@cap-js/agents` for A2A.
 
 **Employees and logins are separate.** An employee record (`userID`) only links data to a
 login name. Adding an employee in the app does **not** create a login: logins are the
@@ -176,7 +183,7 @@ button on team records; clicking it gives 403 (accepted for now).
 | `_i18n/i18n.properties` | All UI texts. Label keys used by `app/labels.cds` live here |
 | `package.json` | Dependencies, scripts, mocked users |
 | `test/admin.http` | Manual API tests (REST Client extension). Run requests 1-9 in order after starting the server |
-| `mcp/server.js` | MCP server (step 12): read-only tools for an AI assistant. Calls CertService over HTTP as one user. Own `mcp/package.json` and `node_modules` |
+| `srv/cert-mcp.cds` | Serves CertService over MCP too (`@mcp @odata`), via the `@cap-js/mcp` plugin (step 12) |
 | `docs/CHANGELOG.md` | Every change, newest first |
 | `docs/tasks/todo.md` | Open bug, next steps, things parked on purpose |
 

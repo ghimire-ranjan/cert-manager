@@ -12,7 +12,20 @@ step, and start a new empty Unreleased section on top.
 
 Branch `story/mcp` (from `main`).
 
-- **12a/12b** (15 Oct) New `mcp/` folder: an MCP server (`server.js`, own `package.json`
+- **12b, switch** (15 Oct) The hand-made `mcp/` server (below) is **removed** and replaced
+  by SAP's official plugin **`@cap-js/mcp`** (beta, 1.5.x), as taught in SAP's "CAP in the
+  Age of AI" video series (Ranjan's study guide). Changes: dependency `@cap-js/mcp`; new
+  `srv/cert-mcp.cds` with `annotate CertService with @mcp @odata;` (`@odata` must stay,
+  otherwise only MCP is served); `cds.mcp.autowire` user `ranjan` in `package.json` (the
+  plugin writes `cds:CertService` into `~/.claude.json` while `cds watch` runs; its default
+  user `alice` is disabled here). Endpoint `/mcp/cert`, tools `describe` and `query`
+  (read-only CQL). Why: one annotation instead of ~120 lines and two libraries, runs inside
+  CAP with the same rules and handlers, moves to BTP with the app, and `@cap-js/agents`
+  (A2A, step 13) reuses its tools. Tested as erik (3), dan (9), chris (10), no login (401);
+  Ranjan checked it in the MCP Inspector (ranjan: 3 own records with Days Left; `DELETE`
+  rejected by the CQL parser). Lesson: a CAP plugin is only loaded when it is listed in
+  `package.json`.
+- **12a/12b, first version** (15 Oct, replaced the same day) New `mcp/` folder: an MCP server (`server.js`, own `package.json`
   with `@modelcontextprotocol/sdk` 1.31.0 and `zod` 4; libraries agreed by Ranjan) with
   read-only tools `who_am_i`, `list_certifications` and `list_catalogue`. It calls
   CertService over HTTP as one user (`CERT_USER` / `CERT_PASSWORD`), so the app's

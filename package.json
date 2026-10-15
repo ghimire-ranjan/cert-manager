@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "type": "commonjs",
   "dependencies": {
+    "@cap-js/mcp": "^1.5.0",
     "@sap/cds": "^10"
   },
   "devDependencies": {
@@ -18,6 +19,12 @@
   },
   "private": true,
   "cds": {
+    "mcp": {
+      "autowire": {
+        "user": "ranjan",
+        "password": "ranjan"
+      }
+    },
     "requires": {
       "auth": {
         "kind": "mocked",

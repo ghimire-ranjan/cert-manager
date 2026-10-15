@@ -208,16 +208,21 @@ the one before.
 
 - [x] **12a** Short design (15 Oct): Ranjan chose "set it up and get it running first"
       over a full design session. Answers in the table below.
-- [x] **12b** Read-only MCP server in `mcp/` (15 Oct, written by Claude at Ranjan's
-      request, reviewed by Ranjan): tools `who_am_i`, `list_certifications` (filters:
-      expiring within N days, status, employee name), `list_catalogue`. Calls CertService
-      over HTTP as one user (`CERT_USER` / `CERT_PASSWORD`), so `@restrict` decides what
-      each user sees. Tested as erik (3 own), dan (9: own + team), chris (all), unknown
-      user (401), against a copy and against the running app.
-- [ ] **12c** Connect it to Claude Code (`claude mcp add …`, see `docs/context.md`) and
-      try the demo questions as erik, dan and chris.
-- [ ] **12d** Write tools (after 12c): e.g. plan / submit a certification (employee),
-      approve / reject (admin, through AdminService). Prototype first.
+- [x] **12b** Read-only MCP (15 Oct). First a hand-made server in `mcp/` (written by
+      Claude); **replaced the same day** by SAP's official plugin `@cap-js/mcp`, after
+      Ranjan pointed to his study guide of SAP's "CAP in the Age of AI" video series.
+      Now: `npm add @cap-js/mcp` + `srv/cert-mcp.cds` (`annotate CertService with @mcp
+      @odata;`) + autowire user `ranjan` in `package.json`. Tools `describe` and `query`
+      (read-only CQL). Tested as erik (3), dan (9), chris (10), no login (401) on a copy;
+      Ranjan tried it in the MCP Inspector as ranjan (3 own records with Days Left;
+      `DELETE` rejected).
+- [ ] **12c** Doc comments (`/** … */`) on CertService entities and fields so the AI
+      understands the data (e.g. what `Pending` means). Decided 15 Oct: do this during
+      the A2A work.
+- [ ] **12d** Write tools (after reading works well): e.g. plan / submit a certification
+      (employee), approve / reject (admin). The plugin only exposes **unbound** actions
+      (`call` tool); our approve / reject are bound, so this needs a small design.
+      Prototype first.
 
 Open questions (owner: Ranjan, raised 14 Oct):
 
@@ -226,7 +231,7 @@ Open questions (owner: Ranjan, raised 14 Oct):
 | What is the goal: learning the technology, a demo for Atturra, or a real feature for the team? | **A demo now, built so it can become a real team feature later** (Ranjan, 15 Oct) |
 | Which tools first (read-only like "my expiring certs", or also writes like "submit a cert")? | **Reading first; changing data (submit, approve) only after reading works** (Ranjan, 15 Oct) |
 | Who uses it: employees only, or also the admin (e.g. "approve all Pending")? | **Both employees and admins**, each seeing only what the app already allows them (Ranjan, 15 Oct) |
-| Where does it run: locally with Claude Code / Claude Desktop, or deployed with the app on BTP? | **Laptop for the demo** (Claude suggestion, Ranjan to confirm 15 Oct). The MCP server calls the app's OData API **as the logged-in user** (not the database), so `@restrict` and the rules still apply and moving to BTP later means changing the address and the login, not the tools |
+| Where does it run: locally with Claude Code / Claude Desktop, or deployed with the app on BTP? | **Laptop for the demo** (agreed 15 Oct). With `@cap-js/mcp` the MCP endpoint is part of the CAP app itself (`/mcp/cert`), so it moves to BTP together with the app; only the login changes (mocked users -> XSUAA) |
 
 ### Step 13: A2A (agent-to-agent)
 
@@ -235,7 +240,10 @@ learning agent asking "who in Dan's team needs to renew this quarter?". Needs st
 first: the agent needs tools before other agents can use it.
 
 - [ ] **13a** Design session after step 12 works: which agent, which other agents talk
-      to it, and what they may ask.
+      to it, and what they may ask. Per the study guide: SAP's `@cap-js/agents` plugin
+      (beta, A2A 0.3.0) turns a CAP service into an agent (`@agent`) and **reuses the
+      `@cap-js/mcp` tools**; the LLM loop runs inside the CAP app, so it needs an LLM
+      connection. Add the doc comments (12c) at the same time.
 - [ ] **13b** Prototype, build, test, document.
 
 ## 3. Parked on purpose
