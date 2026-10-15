@@ -127,7 +127,7 @@ in to the app as **one user** and calls CertService, so it sees exactly what tha
 sees in the Certifications app. Tools: `who_am_i`, `list_certifications`,
 `list_catalogue` (read-only for now). Setup, once (`npm install` in `mcp/` first):
 
-```
+```powershell
 claude mcp add cert-manager -e CERT_USER=erik -e CERT_PASSWORD=erik -- node C:/Users/RanjanGhimire/Projects/cert-manager/mcp/server.js
 ```
 
