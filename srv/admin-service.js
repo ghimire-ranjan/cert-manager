@@ -1,18 +1,19 @@
 const cds = require("@sap/cds");
 const { addExpiryFields } = require("./lib/expiry-fields.js");
 
-async function changeStatus (req, oldStatus , newStatus ) {
-  const record = await SELECT.one.from(req.subject);
+// Move one record from an allowed status to a new one (used by all approve / reject / revoke)
+async function changeStatus(req, EmployeeCertifications, ID, oldStatus, newStatus) {
+  const record = await SELECT.one.from(EmployeeCertifications, ID);
   if (!record) return req.error(404, "Record not found");
-  if (!oldStatus .includes(record.status_code )) {
+  if (!oldStatus.includes(record.status_code)) {
     return req.error(
       400,
-      `Only ${oldStatus .join(" or ")} records can be changed to ${newStatus }`,
+      `Only ${oldStatus.join(" or ")} records can be changed to ${newStatus}`,
     );
   }
 
-  await UPDATE(req.subject).with({ status_code : newStatus  });
-  return SELECT.one.from(req.subject);
+  await UPDATE(EmployeeCertifications, ID).with({ status_code: newStatus });
+  return SELECT.one.from(EmployeeCertifications, ID);
 }
 
 // Readable checks before an employee is saved.
@@ -46,18 +47,53 @@ module.exports = class AdminService extends cds.ApplicationService {
       checkEmployee(req, Employees),
     );
 
+    // Bound actions (the buttons in the Approvals and Employees apps): the record they are
+    // called on comes in req.params
+    const recordID = (req) => req.params[0].ID ?? req.params[0];
+
     this.on("approve", EmployeeCertifications, (req) =>
-      changeStatus (req, ["Pending"], "Verified"),
+      changeStatus(req, EmployeeCertifications, recordID(req), ["Pending"], "Verified"),
     );
 
     this.on("reject", EmployeeCertifications, (req) =>
-      changeStatus (req, ["Pending"], "Rejected"),
+      changeStatus(req, EmployeeCertifications, recordID(req), ["Pending"], "Rejected"),
     );
 
     this.on("revoke", EmployeeCertifications, (req) =>
-      changeStatus (req, ["Verified", "Rejected"], "Pending"),
+      changeStatus(req, EmployeeCertifications, recordID(req), ["Verified", "Rejected"], "Pending"),
     );
+
     addExpiryFields(this, EmployeeCertifications);
+
+    // Unbound actions for AI assistants: find the record by employee login + exam code
+    const byEmployeeAndCode = async (req, statuses) => {
+      const { userID, code } = req.data;
+      const record = await SELECT.one.from(EmployeeCertifications).where({
+        "employee.userID": userID,
+        "certificate.code": code,
+        status_code: { in: statuses },
+      });
+      if (!record) {
+        req.error(404, `No ${statuses.join(" or ")} certification ${code} for '${userID}'`);
+      }
+      return record;
+    };
+  
+
+    this.on("approveCertification", async (req) => {
+      const record = await byEmployeeAndCode(req, ["Pending"]);
+      if (record) return changeStatus(req, EmployeeCertifications, record.ID, ["Pending"], "Verified");
+    });
+
+    this.on("rejectCertification", async (req) => {
+      const record = await byEmployeeAndCode(req, ["Pending"]);
+      if (record) return changeStatus(req, EmployeeCertifications, record.ID, ["Pending"], "Rejected");
+    });
+
+    this.on("revokeCertification", async (req) => {
+      const record = await byEmployeeAndCode(req, ["Verified", "Rejected"]);
+      if (record) return changeStatus(req, EmployeeCertifications, record.ID, ["Verified", "Rejected"], "Pending");
+    });
 
     return super.init();
   }
