@@ -12,6 +12,32 @@ step, and start a new empty Unreleased section on top.
 
 Branch `story/a2a` (from `main`).
 
+- (16 Oct) Model choice moved to a local **`.env`** file: one commented "model block" per
+  model (Groq, SAP AI Core, fake), exactly one active, plus the keys; plain `cds watch`, no
+  profiles. `package.json` has no `llm` settings any more. `.gitignore` now ignores `.env`
+  and `.env.*` (except `.env.example`, the committed template). Tested on a copy: dotted
+  keys (`cds.requires.llm.kind=…`) in `.env` override the plugin defaults; switching blocks
+  leaves no leftovers. Found on the way: with profiles, `--profile hybrid` merged the Groq
+  `credentials` from `[development]` into the AI Core settings.
+
+- **13d (C)** (15 Oct, written by Claude at Ranjan's request) Admin actions for AI
+  assistants. `srv/protocols.cds`: `annotate AdminService with @agent @mcp @odata;` (OData
+  for the Approvals and Employees apps, MCP tools at `/mcp/admin`, admin agent at
+  `/a2a/admin`; `@requires: 'admin'` covers all three). `srv/admin-service.cds`: unbound
+  `approveCertification`, `rejectCertification`, `revokeCertification` `(userID, code)` with
+  doc comments. `srv/admin-service.js`: `changeStatus` now takes the record ID (unbound
+  actions have no `req.subject`); the bound approve / reject / revoke pass `req.params[0]`;
+  new handlers find the record by `employee.userID` + `certificate.code` + status and reuse
+  `changeStatus`. Tested on a copy of the project files: chris approve -> Verified, approve
+  again -> 404 "No Pending certification C_SAC for 'erik'", revoke -> Pending, reject ->
+  Rejected, unknown person -> 404; erik cannot connect to `/mcp/admin` and gets 403 on the
+  admin agent card; Approvals buttons still work (approve / revoke / reject, wrong status
+  400); CertService unchanged.
+- (15 Oct) `srv/cert-mcp.cds` renamed to **`srv/protocols.cds`** (`git mv`, history kept):
+  one file for which protocols each service is served over (`@odata`, `@mcp`, `@agent`),
+  with a header comment explaining them. Ranjan's choice, before AdminService is added.
+  Older entries below still say `cert-mcp.cds`.
+
 - **13c (B)** (15 Oct, written by Ranjan) Unbound actions on CertService for AI
   assistants: `planCertification(code, plannedFor)` and `submitCertification(code,
   earnedOn, evidenceUrl)`, with doc comments the AI reads. The MCP plugin now offers a

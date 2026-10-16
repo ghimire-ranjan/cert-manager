@@ -1,6 +1,35 @@
 # To do
 
-Last updated: 2026-10-15
+Last updated: 2026-10-16
+
+## Where we left off (16 Oct 2026)
+
+Everything up to step 13d is merged into `main` and pushed.
+
+**Starting on another laptop:**
+
+1. `git clone https://github.com/ghimire-ranjan/cert-manager.git` (or `git pull` on `main`),
+   then `npm install` in the project folder.
+2. `.env` is **not** in git (it holds secrets). Create it again: copy `.env.example` to
+   `.env`, then fill in `OPENAI_API_KEY` (Groq) and/or `AICORE_SERVICE_KEY` (SAP AI Core,
+   one line of JSON). Keep exactly one model block active.
+3. `cds watch`. Check the model with `cds env requires.llm`.
+4. Never delete `node_modules` with PowerShell `Remove-Item -Recurse` (npm workspace
+   junctions point into `app/`).
+
+**What works:** 3 Fiori apps (Certifications with draft, Approvals, Employees); MCP on
+CertService (`/mcp/cert`) and AdminService (`/mcp/admin`) with tools describe / query /
+call; A2A agents at `/a2a/cert` and `/a2a/admin`; employee AI actions (plan / submit) and
+admin AI actions (approve / reject / revoke), all tested in the MCP Inspector.
+
+**Not done yet (the "llm" part):** no real AI model has answered yet. Gemini failed (thought
+signatures; 2.5 closed to new users), Ollama is not allowed. Next: put a Groq key in `.env`
+(model block 1), or finish SAP AI Core (instance `gen-ai-a2a` created 16 Oct, plan
+`extended`, Cloud Foundry space `default`): create a service key, connect AI Launchpad,
+check the `orchestration` deployment in resource group `default`, pick a cheap model, put
+the key in `.env` and switch to model block 2. Then 13e (agent instructions) and 13f
+(human in the loop: confirm before changing data). Open question: may employees delete
+their own Pending records?
 
 ## 1. Done: saving with an `earnedOn` date was broken (fixed 12 Oct)
 
@@ -264,8 +293,22 @@ real model):
       plannedFor)` and `submitCertification(code, earnedOn, evidenceUrl)`. The MCP plugin
       only exposes **unbound** actions (`call` tool), so these are new; they must run
       through the existing rules (`applyRules`, `@restrict`, own employee only).
-- [ ] **13d (C)** Admin actions for the AI: unbound approve / reject by employee and code,
-      reusing `changeStatus`; MCP on AdminService (admin only).
+- [x] **13d (C)** Admin actions for the AI (agreed 15 Oct; written by Claude at Ranjan's request, tested 15 Oct):
+  - [x] In `srv/protocols.cds` (renamed from `srv/cert-mcp.cds` on 15 Oct: one file for all
+        protocol settings, Ranjan's choice): `annotate AdminService with @agent @mcp @odata;`
+        (Ranjan: AdminService needs all three - OData for the Approvals and Employees
+        apps, MCP for AI tools, A2A for an admin agent at `/a2a/admin`). Admin only
+        (`@requires: 'admin'` already on the service).
+  - [x] `srv/admin-service.cds`: unbound `approveCertification(userID, code)`,
+        `rejectCertification(userID, code)`, `revokeCertification(userID, code)` with doc
+        comments for the AI.
+  - [x] `srv/admin-service.js`: `changeStatus` takes the record's ID instead of
+        `req.subject` (unbound actions have no subject); the bound approve / reject /
+        revoke pass `req.params[0]`. New handlers find the record by employee login +
+        exam code (+ the right status) and reuse `changeStatus`.
+  - [x] Test: as chris approve / reject / revoke via MCP; wrong status and unknown person
+        give clear errors; erik gets nothing; the Approvals app buttons still work
+        (regression after the `changeStatus` change).
 - [ ] **13e (D)** Agent instructions (the agent's job and rules). Needs a real model.
 - [ ] **13f (E)** Human in the loop (`@agent.hitl`): confirm before any change. Needs a
       real model.

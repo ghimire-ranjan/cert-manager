@@ -122,8 +122,8 @@ Defined with `@restrict`. You must be logged in to use any service.
 Managers do not use AdminService. A read-only "My Team" app for managers is parked.
 
 **AI assistant (MCP, step 12).** CertService is also served over MCP at `/mcp/cert`, using
-SAP's official plugin `@cap-js/mcp` (beta, 1.5.x) and one line in `srv/cert-mcp.cds`:
-`annotate CertService with @mcp @odata;` (keep `@odata`, or the Fiori apps stop working).
+SAP's official plugin `@cap-js/mcp` (beta, 1.5.x) and one line in `srv/protocols.cds`:
+`annotate CertService with @agent @mcp @odata;` (keep `@odata`, or the Fiori apps stop working).
 An AI assistant (Claude Code, or the MCP Inspector) gets two tools: `describe` (what data
 exists) and `query` (a read-only CQL `SELECT`; anything else is rejected). It runs the
 normal CAP service, so `@restrict` and the handlers apply: as ranjan it sees only ranjan's
@@ -147,14 +147,18 @@ makes it an agent that other agents and chat UIs can talk to in plain language, 
 `/a2a/cert` (agent card at `/a2a/cert/.well-known/agent-card.json`, built-in chat at
 `/a2a/cert/preview`). The model runs **inside the CAP app** and uses the MCP tools
 (`describe`, `query`), so the same login and rules apply. Which model is
-`cds.requires.llm`, per profile in `package.json`:
+`cds.requires.llm`, set **only in the local `.env` file** (not in `package.json`; decided
+16 Oct). `.env` is ignored by git; `.env.example` is the committed template. It has one
+"model block" per model; keep exactly **one** active (the others commented out with `#`),
+then restart plain `cds watch`. Check the active one with `cds env requires.llm`.
 
-- plain `cds watch` (`[development]`): `llm-mock`, a fake model with a fixed answer (free;
-  proves the setup, no real answers).
-- `cds watch --profile free-llm`: kind `openai` (any OpenAI-compatible provider). The
-  address and key are set **only in the terminal**: `$env:OPENAI_BASE_URL`,
-  `$env:OPENAI_API_KEY`. Never put a key in a project file.
-- Later `[hybrid]` / production: `aicore` (SAP AI Core, the company route).
+- Groq (free tier): `kind=openai`, `model=openai/gpt-oss-120b`,
+  `credentials.baseURL=https://api.groq.com/openai/v1`, key `OPENAI_API_KEY`.
+- SAP AI Core (company, instance `gen-ai-a2a`, plan `extended`): `kind=aicore`, a model
+  from AI Launchpad, key `AICORE_SERVICE_KEY` (the service key as one line of JSON).
+- Fake model, no AI: `kind=llm-mock`.
+- If no block is active, the plugin falls back to `auto`, which hits its mock bug, so
+  always keep one active. Keys live in `.env` only; never in `package.json` or chat.
 
 **Employees and logins are separate.** An employee record (`userID`) only links data to a
 login name. Adding an employee in the app does **not** create a login: logins are the
@@ -197,7 +201,7 @@ button on team records; clicking it gives 403 (accepted for now).
 | `_i18n/i18n.properties` | All UI texts. Label keys used by `app/labels.cds` live here |
 | `package.json` | Dependencies, scripts, mocked users |
 | `test/admin.http` | Manual API tests (REST Client extension). Run requests 1-9 in order after starting the server |
-| `srv/cert-mcp.cds` | Serves CertService over MCP too (`@mcp @odata`), via the `@cap-js/mcp` plugin (step 12) |
+| `srv/protocols.cds` | Which protocols each service is served over (`@odata`, `@mcp`, `@agent`), all in one file. Keep `@odata` on every service |
 | `docs/CHANGELOG.md` | Every change, newest first |
 | `docs/tasks/todo.md` | Open bug, next steps, things parked on purpose |
 

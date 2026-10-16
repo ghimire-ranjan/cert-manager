@@ -7,6 +7,11 @@ gen/
 default-*.json
 *.sqlite
 
+# Secrets (API keys, AI Core service key): never commit. .env.example has the variable names.
+.env
+.env.*
+!.env.example
+
 # MTA
 mta_archives/
 *_mta_build_tmp
