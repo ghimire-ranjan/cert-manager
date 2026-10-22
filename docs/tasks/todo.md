@@ -1,10 +1,12 @@
 # To do
 
-Last updated: 2026-10-16
+Last updated: 2026-10-22
 
-## Where we left off (16 Oct 2026)
+## Where we left off (22 Oct 2026)
 
-Everything up to step 13d is merged into `main` and pushed.
+Everything up to step 13f is merged into `main` and pushed. SAP AI Core answers
+(`mistralai--mistral-small`). Next: **deploy** (design to be agreed first), then
+**step 14** (SAP exam search, design agreed 22 Oct, see section 2).
 
 **Starting on another laptop:**
 
@@ -19,17 +21,14 @@ Everything up to step 13d is merged into `main` and pushed.
 
 **What works:** 3 Fiori apps (Certifications with draft, Approvals, Employees); MCP on
 CertService (`/mcp/cert`) and AdminService (`/mcp/admin`) with tools describe / query /
-call; A2A agents at `/a2a/cert` and `/a2a/admin`; employee AI actions (plan / submit) and
-admin AI actions (approve / reject / revoke), all tested in the MCP Inspector.
+call; A2A agents at `/a2a/cert` and `/a2a/admin` with instructions and human in the loop
+(`srv/agent-rules.cds`); employee AI actions (plan / submit) and admin AI actions
+(approve / reject / revoke).
 
-**Not done yet (the "llm" part):** no real AI model has answered yet. Gemini failed (thought
-signatures; 2.5 closed to new users), Ollama is not allowed. Next: put a Groq key in `.env`
-(model block 1), or finish SAP AI Core (instance `gen-ai-a2a` created 16 Oct, plan
-`extended`, Cloud Foundry space `default`): create a service key, connect AI Launchpad,
-check the `orchestration` deployment in resource group `default`, pick a cheap model, put
-the key in `.env` and switch to model block 2. Then 13e (agent instructions) and 13f
-(human in the loop: confirm before changing data). Open question: may employees delete
-their own Pending records?
+**If the agent says "content safety check is temporarily unavailable":** the key in
+`.env` must be on **one** line, and VS Code must be restarted if it still holds an old
+`AICORE_SERVICE_KEY` (an existing env var wins over `.env`). The AI Core instance is
+`gen-ai-a2a` (plan `extended`, Cloud Foundry space `default`, resource group `default`).
 
 ## 1. Done: saving with an `earnedOn` date was broken (fixed 12 Oct)
 
@@ -162,10 +161,9 @@ Decisions (15 Oct, Ranjan agreed to Claude's suggestions):
       Pending), Edit own Planned, Edit button on own Verified fails, Delete own Planned.
       As chris: Create gets Chris filled in. As dan: Edit on a team record fails (403).
 - [x] **11e** Remove the parked `@mandatory` item (solved by 11b); update docs.
-- [ ] **Open question (15 Oct, for Ranjan):** may an employee delete their own `Pending`
-      record (withdraw a submission)? `srv/cert-service.cds` (DELETE rule) allows it;
-      `docs/context.md` says only `Planned` / `LearningJourney`. Decide, then make the
-      code or the docs match.
+- [x] **Open question (15 Oct, for Ranjan):** may an employee delete their own `Pending`
+      record (withdraw a submission)? **Decided 22 Oct: yes.** The code already allows
+      it; `docs/context.md` updated to match.
 
 ### Step 9: Employees app (admin)
 
@@ -245,10 +243,10 @@ the one before.
       (read-only CQL). Tested as erik (3), dan (9), chris (10), no login (401) on a copy;
       Ranjan tried it in the MCP Inspector as ranjan (3 own records with Days Left;
       `DELETE` rejected).
-- [ ] **12c** Doc comments (`/** … */`) on CertService entities and fields so the AI
+- [x] **12c** (done as 13b) Doc comments (`/** … */`) on CertService entities and fields so the AI
       understands the data (e.g. what `Pending` means). Decided 15 Oct: do this during
       the A2A work.
-- [ ] **12d** Write tools (after reading works well): e.g. plan / submit a certification
+- [x] **12d** (done as 13c and 13d) Write tools (after reading works well): e.g. plan / submit a certification
       (employee), approve / reject (admin). The plugin only exposes **unbound** actions
       (`call` tool); our approve / reject are bound, so this needs a small design.
       Prototype first.
@@ -309,9 +307,52 @@ real model):
   - [x] Test: as chris approve / reject / revoke via MCP; wrong status and unknown person
         give clear errors; erik gets nothing; the Approvals app buttons still work
         (regression after the `changeStatus` change).
-- [ ] **13e (D)** Agent instructions (the agent's job and rules). Needs a real model.
-- [ ] **13f (E)** Human in the loop (`@agent.hitl`): confirm before any change. Needs a
-      real model.
+- [x] **13e (D)** Agent instructions (the agent's job and rules). 20 Oct, written by
+      Claude at Ranjan's request: a doc comment on each service in the new
+      `srv/agent-rules.cds` becomes that agent's instructions (system prompt).
+- [x] **13f (E)** Human in the loop: `@agent.hitl` on the five AI actions in
+      `srv/agent-rules.cds`. The agent stops with state `input-required` and the user
+      answers `approve` (or `yes` / `ok`), anything else rejects. Bound Fiori buttons
+      unchanged. Tested 20 Oct with SAP AI Core (`mistralai--mistral-small`):
+  - [x] ranjan plans a new exam -> gate -> approve -> Planned record created
+  - [x] ranjan plans C_FIORD he already has -> agent says so, creates nothing
+  - [x] chris approves erik C_SAC -> gate -> declines -> "Nothing was changed", still
+        Pending; asks again -> approve -> Verified
+  - [x] ranjan on `/a2a/admin` -> 403
+- [x] Ranjan tried it in the preview chat (22 Oct). Found: `@hitl` (without `agent.`) is
+      silently ignored, so the gate disappeared; fixed back to `@agent.hitl`.
+
+### Step 14: SAP exam search (design agreed 22 Oct, not started)
+
+Goal: the agent answers questions about **SAP exam details** (see `docs/context.md`) by
+looking them up live on SAP's official sites, always with the source link. Anything else
+(study plans, schedules, personal advice, off-topic) is politely refused. Decisions:
+look up live, nobody types exam data in (not stored in our tables); search service
+**Tavily**; only `learning.sap.com` and `training.sap.com`; open to everyone logged in
+(the 1,000 free searches a month are shared).
+
+- [ ] Ranjan: check Atturra allows Tavily; sign up at tavily.com; put `TAVILY_API_KEY` in
+      `.env` (add an empty `TAVILY_API_KEY=` to `.env.example`)
+- [ ] `srv/sap-exam-service.cds`: new `SapExamService` (`@requires: 'authenticated-user'`,
+      `@mcp`) with one function `searchSapSites(question)`
+- [ ] `srv/sap-exam-service.js`: calls Tavily; the site list is fixed in this code (the
+      hard limit); returns page text and links
+- [ ] `srv/agent-rules.cds`: both agents use the search for exam questions, always give
+      the link, refuse anything outside SAP exam details, never invent
+- [ ] Test: C_CPE topics (learning.sap.com link), price (training.sap.com link), "plan my
+      holiday" and "make me a study plan" refused, made-up exam code -> "nothing found",
+      no login -> 401
+- [ ] Open: who writes the code (Ranjan or Claude); T-shirt size (S / M / L / XL), or a
+      question for the architect
+
+### Step 15: SAP exam agent (later)
+
+Add `@agent` to `SapExamService`: it becomes its own agent, and the certification agent
+calls it (true agent-to-agent). Found 22 Oct: the plugin setting `agents.connect` is
+`auto`, so every agent already connects to every other agent and MCP service in the app
+(e.g. the employee agent can call the admin agent; tested: ranjan gets 403 there, because
+his login is passed along). Decide then whether to list the connections explicitly
+(`@agent.connect`).
 
 ## 3. Parked on purpose
 

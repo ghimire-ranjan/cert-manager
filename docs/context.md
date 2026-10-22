@@ -64,6 +64,8 @@ The seed data also has `john`, an inactive employee with no login.
 | Approve | Admin action: `Pending` -> `Verified`. |
 | Reject | Admin action: `Pending` -> `Rejected`. No reason is recorded (yet). |
 | Revoke | Admin action: `Verified` or `Rejected` -> `Pending`. Undoes a decision and re-opens the record so the employee can edit it. |
+| SAP exam details | Facts SAP publishes about an exam, not stored in our catalogue: official exam page link, exam topics and weighting, format (questions, duration, pass mark, language), price and booking, validity and "stay current" rule, recommended learning journey (name and link). Never study plans, schedules or personal advice. Looked up live, only on SAP's official sites `learning.sap.com` and `training.sap.com`, always with the source link. Nobody types them in. (Agreed 22 Oct.) |
+| SAP exam agent | Planned: a separate agent that answers questions about SAP exam details, called by our certification agent (true agent-to-agent). Starts as a plain search tool (`SapExamService`). |
 
 ## Status flow
 
@@ -109,7 +111,7 @@ Defined with `@restrict`. You must be logged in to use any service.
 | --- | --- | --- | --- |
 | Certifications | Read | Read | Everything |
 | Employees | Read | Read | Everything |
-| EmployeeCertifications | Read and create **own** records. Update own only while `Planned`, `LearningJourney` or `Pending`. Delete own only while `Planned` or `LearningJourney` | Also reads direct reports' records, **except `Rejected`** | Everything |
+| EmployeeCertifications | Read and create **own** records. Update own only while `Planned`, `LearningJourney` or `Pending`. Delete own only while `Planned`, `LearningJourney` or `Pending` (withdrawing a submission before an admin decides) | Also reads direct reports' records, **except `Rejected`** | Everything |
 
 **AdminService** (`srv/admin-service.cds` + `.js`, at `/odata/v4/admin`, admin role only):
 
@@ -160,6 +162,12 @@ then restart plain `cds watch`. Check the active one with `cds env requires.llm`
 - If no block is active, the plugin falls back to `auto`, which hits its mock bug, so
   always keep one active. Keys live in `.env` only; never in `package.json` or chat.
 
+**How the agents behave (`srv/agent-rules.cds`, 20 Oct).** The doc comment on each
+service is that agent's instructions. Every AI action that changes data has
+`@agent.hitl` (human in the loop): the agent stops and shows the action it wants to run;
+the user answers `approve` to run it, anything else cancels it. This applies to the
+built-in agents only; Claude Code (MCP) asks for permission in its own way.
+
 **Employees and logins are separate.** An employee record (`userID`) only links data to a
 login name. Adding an employee in the app does **not** create a login: logins are the
 mocked users in `package.json` now, and the company login (XSUAA) after deployment.
@@ -202,6 +210,7 @@ button on team records; clicking it gives 403 (accepted for now).
 | `package.json` | Dependencies, scripts, mocked users |
 | `test/admin.http` | Manual API tests (REST Client extension). Run requests 1-9 in order after starting the server |
 | `srv/protocols.cds` | Which protocols each service is served over (`@odata`, `@mcp`, `@agent`), all in one file. Keep `@odata` on every service |
+| `srv/agent-rules.cds` | How the built-in agents behave: their instructions (doc comment per service) and which actions need the user's approval (`@agent.hitl`) |
 | `docs/CHANGELOG.md` | Every change, newest first |
 | `docs/tasks/todo.md` | Open bug, next steps, things parked on purpose |
 

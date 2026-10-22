@@ -10,7 +10,32 @@ step, and start a new empty Unreleased section on top.
 
 ## Unreleased
 
-Branch `story/a2a` (from `main`).
+(nothing yet)
+
+## 22 Oct 2026: step 13, A2A agents, AI actions, instructions and human in the loop
+
+Branches `story/a2a` and `story/agent-rules` (from `main`).
+
+- (22 Oct) Docs tidy-up: decided employees **may** delete (withdraw) their own `Pending`
+  record; the code already allowed it, `docs/context.md` now says so. 12c / 12d ticked
+  (done as 13b-13d). Step 14 (SAP exam search) and step 15 (SAP exam agent) designs saved
+  in `docs/tasks/todo.md`; new terms "SAP exam details" and "SAP exam agent" in
+  `docs/context.md`.
+- **13e (D) + 13f (E)** (20 Oct, written by Claude at Ranjan's request) New
+  **`srv/agent-rules.cds`**: everything about how the built-in agents behave. A doc comment
+  on `annotate CertService;` / `annotate AdminService;` is each agent's instructions (job,
+  rules, exact action parameters, "check for an existing record first", "say nothing was
+  changed when the user declines"). `@agent.hitl` on `planCertification`,
+  `submitCertification`, `approveCertification`, `rejectCertification`,
+  `revokeCertification`: the agent pauses (`input-required`) until the user answers
+  `approve`. Not `@Common.IsActionCritical`, which would also add pop-ups to the Fiori
+  buttons. Tested with SAP AI Core: approve, decline, duplicate plan, wrong user (403).
+  Found on the way: the first instructions made the agent ask twice (in its own words,
+  then at the gate) and it used wrong parameter names (`employeeID`, `examCode`); both
+  fixed in the instructions.
+- (20 Oct) SAP AI Core works. Cause of "content safety check is temporarily unavailable":
+  the key in `.env` was on several lines, and VS Code still held an old one-character
+  `AICORE_SERVICE_KEY` (CAP never overwrites an existing env var with `.env`).
 
 - (16 Oct) Model choice moved to a local **`.env`** file: one commented "model block" per
   model (Groq, SAP AI Core, fake), exactly one active, plus the keys; plain `cds watch`, no
