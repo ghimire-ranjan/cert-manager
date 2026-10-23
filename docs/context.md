@@ -173,6 +173,13 @@ login name. Adding an employee in the app does **not** create a login: logins ar
 mocked users in `package.json` now, and the company login (XSUAA) after deployment.
 A new employee can log in only once a login with the same name exists.
 
+**Adding a new employee in the cloud (agreed 23 Oct) takes two steps, in any order:**
+(1) in the BTP cockpit, give them the role collection "CertManager Employee" (or
+"CertManager Admin"); (2) in the Employees app, create their record with `userID` = their
+exact login name. Only step 1: they can log in but can't create records. Only step 2:
+they can't get in. When someone leaves: remove the role collection and set Active off;
+their history stays.
+
 **Watch out when adding links to the database model:** a new association on a database
 entity appears in **every** service built on it. Check each service's `@restrict` rules,
 and use `excluding { … }` in a projection where a service must not offer the link
