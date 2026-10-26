@@ -1,12 +1,76 @@
 # To do
 
-Last updated: 2026-10-22
+Last updated: 2026-10-26
 
-## Where we left off (22 Oct 2026)
+Two short lists first. The details, decisions and test results for each step are further
+down ("Next steps", by step number).
 
-Everything up to step 13f is merged into `main` and pushed. SAP AI Core answers
-(`mistralai--mistral-small`). Next: **deploy** (design to be agreed first), then
-**step 14** (SAP exam search, design agreed 22 Oct, see section 2).
+## To do (in order)
+
+### Catalogue app (done 26 Oct, branch `story/catalogue-app`)
+
+- [x] Restart `cds watch`, open `/catalogue/webapp/index.html` as chris (Ctrl+F5): list
+      with Code / Issuer filters, "Details" section, no Delete, duplicate code refused
+      (26 Oct)
+- [x] Update docs, commit, merge to `main`, push (26 Oct)
+
+### Before deploying (Ranjan, in the BTP cockpit, subaccount Sandpit)
+
+- [ ] Create space `cert-manager`; check you are Space Developer in it
+- [ ] Check you can assign role collections (Security > Users)
+- [ ] Check which login Sandpit uses (Security > Trust Configuration)
+- [ ] Check you have role collection `Launchpad_Admin`
+- [ ] Check HANA Cloud is mapped to space `cert-manager`
+
+### Deploy round 1: the app in the cloud, no AI
+
+- [ ] Mocked users for the laptop only; real login (XSUAA) in the cloud
+- [ ] New role `employee`; services require it; `xs-security.json`; role collections
+      "CertManager Employee" and "CertManager Admin"
+- [ ] HANA database (our own HDI container); only catalogue + status list go to the cloud
+- [ ] `mta.yaml` (server, database, login, HTML5 repository for the 4 apps)
+- [ ] Deploy; assign yourself "CertManager Admin"; Work Zone site with 4 tiles; add
+      yourself in the Employees app
+- [ ] Test: log in, create a record, approve it; a user without a role can't get in
+
+### Deploy round 2: AI in the cloud
+
+- [ ] Destination `cert-manager-aicore` in Sandpit (from the AI Core key)
+- [ ] AI settings for the cloud; agent chat reachable from the launchpad; test
+
+### Step 14: SAP exam search (design agreed, see below)
+
+- [ ] Check Atturra allows Tavily; sign up; key in `.env`
+- [ ] `SapExamService` with `searchSapSites(question)` (only `learning.sap.com`,
+      `training.sap.com`); agent rules; tests
+
+**Step 15: SAP exam agent** (later): `@agent` on `SapExamService`, true agent-to-agent
+
+### Later / open
+
+- [ ] Sizes (S / M / L / XL) for Catalogue app, round 1, round 2, step 14: question for
+      the architect
+- [ ] Change history (`@cap-js/change-tracking`)
+- [ ] README: replace the "Welcome to your new CAP project" text
+
+## Done
+
+- **Step 1** (12 Oct): saving with an `earnedOn` date fixed
+- **Step 7** (12 Oct): AdminService with approve / reject / revoke; `test/admin.http`
+- **Step 8** (13-14 Oct): Approvals app (tabs, buttons, days left)
+- **Step 10** (14 Oct): status as a code list (dropdowns with readable names)
+- **Step 11** (15 Oct): draft in the Certifications app (create and edit)
+- **Step 9** (15 Oct): Employees app (draft, no delete, unique login, manager picker)
+- **Step 12** (15 Oct): MCP with SAP's `@cap-js/mcp` plugin
+- **Step 13** (15-22 Oct): A2A agents (`@cap-js/agents`), AI actions for employees and
+  admins, agent instructions and human in the loop (`srv/agent-rules.cds`); SAP AI Core
+  (`mistralai--mistral-small`) answers
+- **22 Oct:** tidy-up (delete own Pending allowed, docs), deploy design agreed
+- **Catalogue app** (23-26 Oct): exam code unique, admins edit
+  the catalogue with draft, no delete, readable duplicate-code message; app generated and
+  annotated (`app/catalogue`)
+
+## Where we left off
 
 **Starting on another laptop:**
 

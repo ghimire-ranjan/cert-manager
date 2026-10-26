@@ -5,3 +5,5 @@ using from './certifications/annotations';
 using from './approvals/annotations';
 
 using from './employees/annotations';
+
+using from './catalogue/annotations';

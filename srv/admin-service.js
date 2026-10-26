@@ -39,12 +39,35 @@ async function checkEmployee(req, Employees) {
   }
 }
 
+// Readable check before an exam is saved.
+// (The database also blocks a duplicate code, but only with a technical 500 error.)
+async function checkCertification(req, Certifications) {
+  // On UPDATE, req.data holds only the changed fields, so merge with the stored record
+  const stored = req.event === "UPDATE" ? await SELECT.one.from(req.subject) : {};
+  const exam = { ...stored, ...req.data };
+
+  const sameCode = await SELECT.one
+    .from(Certifications)
+    .where({ code: exam.code, ID: { "!=": exam.ID } });
+  if (sameCode) {
+    return req.error(
+      400,
+      `Exam code '${exam.code}' is already used by ${sameCode.name}`,
+      "code",
+    );
+  }
+}
+
 module.exports = class AdminService extends cds.ApplicationService {
   init() {
-    const { EmployeeCertifications, Employees } = this.entities;
+    const { EmployeeCertifications, Employees, Certifications } = this.entities;
 
     this.before(["CREATE", "UPDATE"], Employees, (req) =>
       checkEmployee(req, Employees),
+    );
+
+    this.before(["CREATE", "UPDATE"], Certifications, (req) =>
+      checkCertification(req, Certifications),
     );
 
     // Bound actions (the buttons in the Approvals and Employees apps): the record they are

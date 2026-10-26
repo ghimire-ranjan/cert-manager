@@ -119,7 +119,7 @@ Defined with `@restrict`. You must be logged in to use any service.
 | --- | --- |
 | Employees | Read, create and edit (draft) in the **Employees** app. No delete (405): set `active = false` instead. Login (`userID`) must be unique; nobody can be their own manager |
 | EmployeeCertifications | Read all, plus the Approve, Reject and Revoke actions. No direct edits here. |
-| Certifications | Read (for drop-down lists) |
+| Certifications | Read, create and edit (draft) in the **Catalogue** app. No delete (405): records point to the exams. The exam `code` must be unique |
 
 Managers do not use AdminService. A read-only "My Team" app for managers is parked.
 
@@ -211,6 +211,8 @@ button on team records; clicking it gives 403 (accepted for now).
 | `app/approvals/webapp/` | Generated Approvals app. Open at `/approvals/webapp/index.html` |
 | `app/employees/annotations.cds` | Fiori UI for the admin **Employees** app (on AdminService): list, details, manager value help (active only), certifications table with Approve / Reject / Revoke |
 | `app/employees/webapp/` | Generated Employees app. Open at `/employees/webapp/index.html` |
+| `app/catalogue/annotations.cds` | Fiori UI for the admin **Catalogue** app (on AdminService): list of exams, edit page (code, name, issuer) |
+| `app/catalogue/webapp/` | Generated Catalogue app. Open at `/catalogue/webapp/index.html` |
 | `app/labels.cds` | Field labels (`@Common.Label`) on the database entities, shared by every service and app |
 | `app/services.cds` | Pulls the labels and the UI annotations of both apps into the build |
 | `_i18n/i18n.properties` | All UI texts. Label keys used by `app/labels.cds` live here |

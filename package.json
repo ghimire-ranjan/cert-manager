@@ -16,7 +16,8 @@
     "start": "cds-serve",
     "watch-certifications": "cds watch --open certifications/index.html?sap-ui-xx-viewCache=false --livereload false",
     "watch-approvals": "cds watch --open approvals/index.html?sap-ui-xx-viewCache=false --livereload false",
-    "watch-employees": "cds watch --open employees/index.html?sap-ui-xx-viewCache=false --livereload false"
+    "watch-employees": "cds watch --open employees/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-catalogue": "cds watch --open catalogue/index.html?sap-ui-xx-viewCache=false --livereload false"
   },
   "private": true,
   "cds": {
@@ -64,6 +65,7 @@
   "sapux": [
     "app/certifications",
     "app/approvals",
-    "app/employees"
+    "app/employees",
+    "app/catalogue"
   ]
 }

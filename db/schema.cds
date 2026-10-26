@@ -11,6 +11,7 @@ entity Statuses : sap.common.CodeList {
 }
 
 
+@assert.unique: {code: [code]}
 entity Certifications : cuid, managed {
     code   : String(20)  @mandatory;
     name   : String(100) @mandatory;

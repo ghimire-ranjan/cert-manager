@@ -7,7 +7,8 @@ service AdminService {
     @Capabilities.DeleteRestrictions.Deletable: false
     entity Employees              as projection on my.Employees;
 
-    @readonly
+    @odata.draft.enabled
+    @Capabilities.DeleteRestrictions.Deletable: false
     entity Certifications         as projection on my.Certifications;
 
     @readonly
@@ -26,25 +27,22 @@ service AdminService {
 
     /** Approve a Pending certification: it becomes Verified. */
     action approveCertification(
-        /** Login name of the employee, e.g. erik */
-        userID : String,
-        /** SAP exam code, e.g. C_SAC */
-        code   : String
-    ) returns EmployeeCertifications;
+                                /** Login name of the employee, e.g. erik */
+                                userID: String,
+                                /** SAP exam code, e.g. C_SAC */
+                                code: String) returns EmployeeCertifications;
 
     /** Reject a Pending certification: it becomes Rejected. */
     action rejectCertification(
-        /** Login name of the employee, e.g. erik */
-        userID : String,
-        /** SAP exam code, e.g. C_SAC */
-        code   : String
-    ) returns EmployeeCertifications;
+                               /** Login name of the employee, e.g. erik */
+                               userID: String,
+                               /** SAP exam code, e.g. C_SAC */
+                               code: String)  returns EmployeeCertifications;
 
     /** Undo a decision: a Verified or Rejected certification goes back to Pending. */
     action revokeCertification(
-        /** Login name of the employee, e.g. erik */
-        userID : String,
-        /** SAP exam code, e.g. C_SAC */
-        code   : String
-    ) returns EmployeeCertifications;
+                               /** Login name of the employee, e.g. erik */
+                               userID: String,
+                               /** SAP exam code, e.g. C_SAC */
+                               code: String)  returns EmployeeCertifications;
 }
