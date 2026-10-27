@@ -4,9 +4,14 @@ const { today, daysUntil, criticality } = require("./expiry.js");
 // Used by CertService and AdminService, so the logic lives in one place.
 function addExpiryFields(srv, entity) {
   // Virtual fields are calculated from validUntil, so always read it
+  // (but not for counts like count(1): HANA can't mix those with a column)
   srv.before("READ", entity, (req) => {
     const columns = req.query.SELECT.columns;
-    if (columns && !columns.some((c) => c.ref?.[0] === "validUntil")) {
+    if (
+      columns &&
+      !columns.some((c) => c.func) &&
+      !columns.some((c) => c.ref?.[0] === "validUntil")
+    ) {
       columns.push({ ref: ["validUntil"] });
     }
   });

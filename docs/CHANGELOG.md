@@ -30,6 +30,13 @@ unless noted.
 - In BTP (not in git): own free HANA `cert-manager-hana` created by Claude (the shared HANA
   is not mapped to our space). Two deploys OK; everything 401 without login; the
   Certifications app opens from HTML5 Applications and gets 403 until roles are assigned.
+- (27 Oct, written by Claude at Ranjan's request) **Two bugs that only HANA shows**, both
+  fine on SQLite: `db/schema.cds` `isEarned` now uses `case when earnedOn is not null then
+  true else false end` (HANA refused the bare condition, so every draft read and Create
+  failed); `srv/lib/expiry-fields.js` no longer adds `validUntil` to count queries (HANA
+  refused `count(1)` next to a column, so the Approvals tab counts failed). Redeployed.
+- (27 Oct) Round 1 works: role collections on Ranjan's CIS user (Atturra IAS), Ranjan
+  Ghimire's Login set to his CIS user ID in the Employees app, Create fills in Ranjan.
 
 ## 26 Oct 2026: Catalogue app (before deploying)
 

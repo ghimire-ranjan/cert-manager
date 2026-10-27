@@ -54,8 +54,24 @@ down ("Next steps", by step number).
 - [x] Certifications app opens from cockpit > HTML5 Applications; the server answers 403
       "lacking required roles: [employee, admin]" until role collections are assigned:
       the role check works in the cloud (27 Oct)
-- [ ] **Found 27 Oct:** in the cloud the user ID is a GUID (e.g. `0a41fa04-…`), not the
-      e-mail. `Employees.userID` must match it. Check again once roles are assigned
+- [x] Role collections assigned to the CIS user (27 Oct): the Certifications app shows all
+      10 records from HANA as admin
+- [x] **Found 27 Oct, solved:** Ranjan Ghimire's Login set to the CIS user ID in the Employees app; Create now fills in Ranjan. In the cloud the user ID is a GUID (e.g. `0a41fa04-…`), not the
+      e-mail. `Employees.userID` must match it. Check again once roles are assigned.
+      Cause: Sandpit has two login systems. App logins go through Atturra's IAS ("CIS",
+      `aalbksesi.accounts.cloud.sap`), where the user name is a GUID; the default
+      identity provider (SAP ID) uses the e-mail. Role collections must be assigned to
+      the **CIS** user (Nick Yang assigned them to the default-IdP user first; asked him
+      to add them to the CIS user too, 27 Oct)
+- [x] **HANA-only bugs found and fixed (27 Oct)**, both worked on SQLite: (1) `isEarned =
+      (earnedOn is not null)` broke every draft read on HANA ("incorrect syntax near is");
+      now `case when … then true else false end`. (2) `addExpiryFields` added
+      `validUntil` to count queries (`count(1)` + column, refused by HANA); now skipped
+      when the query has a `func`. Redeployed; Create and the list work in the cloud
+- [x] Login errors in the browser after a deploy: use a private window (old cookies)
+- [ ] **Found 27 Oct:** a record saved in the cloud **without an employee** (admin, login
+      not linked to an employee yet), although `employee` is `@mandatory`. Find out why
+      the check did not stop it
 - [ ] Before any real use: move `cert.manager-Employees.csv` and
       `cert.manager-EmployeeCertifications.csv` from `db/data` to `test/data` (laptop
       only), with `git mv`

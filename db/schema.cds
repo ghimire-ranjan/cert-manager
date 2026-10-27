@@ -37,8 +37,9 @@ entity EmployeeCertifications : cuid, managed {
     certificate               : Association to Certifications             @mandatory;
     earnedOn                  : Date;
     plannedFor                : Date;
+    // case instead of "earnedOn is not null": HANA allows a condition only in WHERE / CASE
     isEarned                  : Boolean = (
-        earnedOn is not null
+        case when earnedOn is not null then true else false end
     );
     validUntil                : Date                                      @readonly;
     evidenceUrl               : String(500)                               @assert.format: '^https://';
