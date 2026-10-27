@@ -53,6 +53,15 @@ module.exports = class CertService extends cds.ApplicationService {
           return req.error(403, `No employee record for user '${req.user.id}'`);
         req.data.employee_ID = self.ID;
       }
+      // The Employee field is read-only on screen, and CAP lets read-only win over
+      // @mandatory, so check it here (e.g. an admin whose login has no employee record)
+      if (!req.data.employee_ID) {
+        return req.error(
+          400,
+          `Your login '${req.user.id}' is not linked to an employee. Ask an admin to set it as Login in the Employees app.`,
+          "employee_ID",
+        );
+      }
       applyRules(req, req.data);
     });
 

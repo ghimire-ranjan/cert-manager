@@ -69,9 +69,16 @@ down ("Next steps", by step number).
       `validUntil` to count queries (`count(1)` + column, refused by HANA); now skipped
       when the query has a `func`. Redeployed; Create and the list work in the cloud
 - [x] Login errors in the browser after a deploy: use a private window (old cookies)
-- [ ] **Found 27 Oct:** a record saved in the cloud **without an employee** (admin, login
-      not linked to an employee yet), although `employee` is `@mandatory`. Find out why
-      the check did not stop it
+- [x] **Found and fixed 27 Oct:** a record saved in the cloud **without an employee**
+      (admin, login not linked to an employee yet), although `employee` is `@mandatory`.
+      Cause: `@Common.FieldControl: #ReadOnly` on the Employee field (UI annotation) also
+      switches off `@mandatory`, because CAP lets read-only win over mandatory. Fix:
+      readable 400 in `before CREATE` in `srv/cert-service.js` that names the login to
+      link. Tested on the laptop (boss 400, chris and ranjan 201) and deployed
+- [ ] `mbt build` can empty the laptop's `node_modules`: each app's build step runs
+      `npm ci` inside its npm workspace, which resets the shared `node_modules` to that
+      app's tools. Until fixed: run `npm install` after `mbt build` if `cds watch` says
+      "Cannot find module '@sap/cds'"
 - [ ] Before any real use: move `cert.manager-Employees.csv` and
       `cert.manager-EmployeeCertifications.csv` from `db/data` to `test/data` (laptop
       only), with `git mv`

@@ -10,6 +10,18 @@ step, and start a new empty Unreleased section on top.
 
 ## Unreleased
 
+Branch `deployment` (from `main`).
+
+- (27 Oct, written by Claude at Ranjan's request) `srv/cert-service.js`: `before CREATE`
+  refuses a record without an employee with a readable 400 on the Employee field, naming
+  the login to link in the Employees app. Why: an admin whose login was not linked to an
+  employee could save records without one. `@mandatory` did not stop it, because the
+  Employee field is `@Common.FieldControl: #ReadOnly` and CAP lets read-only win over
+  mandatory. Tested on the laptop (admin without employee 400, chris and ranjan 201);
+  deployed to Sandpit.
+
+## 27 Oct 2026: deploy round 1 (Sandpit)
+
 Branch `deployment` (from `main`, Ranjan's name for it). Deploy round 1 to BTP subaccount
 DalRae Free Tier (Sandpit), space `Cert-manager`. Typed by Ranjan with Claude explaining,
 unless noted.
