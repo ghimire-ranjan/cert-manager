@@ -4,8 +4,10 @@
   "type": "commonjs",
   "dependencies": {
     "@cap-js/agents": "^0.9.8",
+    "@cap-js/hana": "^3",
     "@cap-js/mcp": "^1.5.0",
-    "@sap/cds": "^10"
+    "@sap/cds": "^10",
+    "@sap/xssec": "^4"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^3",
@@ -28,35 +30,52 @@
       }
     },
     "requires": {
-      "auth": {
-        "kind": "mocked",
-        "users": {
-          "chris": {
-            "password": "chris",
-            "roles": [
-              "admin"
-            ]
-          },
-          "dan": {
-            "password": "dan"
-          },
-          "ranjan": {
-            "password": "ranjan"
-          },
-          "erik": {
-            "password": "erik"
-          },
-          "alice": false,
-          "bob": false,
-          "carol": false,
-          "dave": false,
-          "erin": false,
-          "fred": false,
-          "me": false,
-          "yves": false,
-          "*": false
+      "[development]": {
+        "auth": {
+          "kind": "mocked",
+          "users": {
+            "chris": {
+              "password": "chris",
+              "roles": [
+                "admin"
+              ]
+            },
+            "dan": {
+              "password": "dan",
+              "roles": [
+                "employee"
+              ]
+            },
+            "ranjan": {
+              "password": "ranjan",
+              "roles": [
+                "employee"
+              ]
+            },
+            "erik": {
+              "password": "erik",
+              "roles": [
+                "employee"
+              ]
+            },
+            "alice": false,
+            "bob": false,
+            "carol": false,
+            "dave": false,
+            "erin": false,
+            "fred": false,
+            "me": false,
+            "yves": false,
+            "*": false
+          }
         }
-      }
+      },
+      "[production]": {
+        "auth": "xsuaa"
+      },
+      "html5-repo": true,
+      "destinations": true,
+      "workzone": true
     }
   },
   "workspaces": [

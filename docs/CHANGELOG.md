@@ -10,7 +10,26 @@ step, and start a new empty Unreleased section on top.
 
 ## Unreleased
 
-(nothing yet)
+Branch `deployment` (from `main`, Ranjan's name for it). Deploy round 1 to BTP subaccount
+DalRae Free Tier (Sandpit), space `Cert-manager`. Typed by Ranjan with Claude explaining,
+unless noted.
+
+- `package.json`: mocked users only under `[development]`; laptop users dan / ranjan /
+  erik get role `employee`. In the cloud: XSUAA (`[production]`), HANA (`@cap-js/hana`),
+  `@sap/xssec`.
+- `srv/cert-service.cds`: `@requires: ['employee', 'admin']` instead of
+  `authenticated-user` (a logged-in user without a role gets 403; tested).
+- `xs-security.json` (`cds add xsuaa`) + role collections "CertManager Admin" and
+  "CertManager Employee".
+- `mta.yaml` (`cds add mta`, `html5-repo`, `workzone`): server, database deployer, app
+  deployer, four HTML5 apps, XSUAA, HDI container, HTML5 repository, destination service.
+- Apps: `xs-app.json` (routes), build + zip scripts, `sap.cloud` service
+  `certmanager.service`; inbounds fixed by Claude (the generator gave all four apps
+  `employees-display`). `.gitignore`: `dist/`.
+- Test data still in `db/data`, so it goes to the cloud too (Ranjan's choice, for learning).
+- In BTP (not in git): own free HANA `cert-manager-hana` created by Claude (the shared HANA
+  is not mapped to our space). Two deploys OK; everything 401 without login; the
+  Certifications app opens from HTML5 Applications and gets 403 until roles are assigned.
 
 ## 26 Oct 2026: Catalogue app (before deploying)
 

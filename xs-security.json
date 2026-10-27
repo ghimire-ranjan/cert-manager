@@ -1,0 +1,47 @@
+{
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.admin",
+      "description": "admin"
+    },
+    {
+      "name": "$XSAPPNAME.employee",
+      "description": "employee"
+    }
+  ],
+  "attributes": [],
+  "role-templates": [
+    {
+      "name": "admin",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.admin"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "employee",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.employee"
+      ],
+      "attribute-references": []
+    }
+  ],
+  "role-collections": [
+    {
+      "name": "CertManager Admin",
+      "description": "Admins of the certification manager",
+      "role-template-references": [
+        "$XSAPPNAME.admin"
+      ]
+    },
+    {
+      "name": "CertManager Employee",
+      "description": "Employees using the certification manager",
+      "role-template-references": [
+        "$XSAPPNAME.employee"
+      ]
+    }
+  ]
+}

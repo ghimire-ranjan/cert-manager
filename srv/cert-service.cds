@@ -1,7 +1,7 @@
 using {cert.manager as my} from '../db/schema';
 
 
-@requires: 'authenticated-user'
+@requires: ['employee', 'admin']
 service CertService {
 
     @restrict: [
