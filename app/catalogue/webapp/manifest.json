@@ -30,6 +30,9 @@
         "catalogue-display": {
           "semanticObject": "catalogue",
           "action": "display",
+          "title": "{{appTitle}}",
+          "subTitle": "{{appDescription}}",
+          "icon": "sap-icon://course-book",
           "signature": {
             "parameters": {},
             "additionalParameters": "allowed"

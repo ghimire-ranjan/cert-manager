@@ -30,6 +30,9 @@
         "certifications-display": {
           "semanticObject": "certifications",
           "action": "display",
+          "title": "{{appTitle}}",
+          "subTitle": "{{appDescription}}",
+          "icon": "sap-icon://education",
           "signature": {
             "parameters": {},
             "additionalParameters": "allowed"

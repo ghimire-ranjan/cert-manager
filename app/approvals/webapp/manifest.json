@@ -30,6 +30,9 @@
         "approvals-display": {
           "semanticObject": "approvals",
           "action": "display",
+          "title": "{{appTitle}}",
+          "subTitle": "{{appDescription}}",
+          "icon": "sap-icon://approvals",
           "signature": {
             "parameters": {},
             "additionalParameters": "allowed"

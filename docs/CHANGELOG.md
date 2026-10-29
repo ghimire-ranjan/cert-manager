@@ -10,6 +10,25 @@ step, and start a new empty Unreleased section on top.
 
 ## Unreleased
 
+Branch `deployment`. Launchpad site in SAP Build Work Zone (29 Oct, written by Claude at
+Ranjan's request; Ranjan built the site in Work Zone).
+
+- `mta.yaml`: `HTML5Runtime_enabled: true` on the `cert-manager-destination` resource.
+  Without it Work Zone's HTML5 Apps provider ignored our apps (they still opened from
+  the cockpit). The "Duplicate sap.app/id" in the provider report is another project's
+  app (`customUI`), not ours.
+- The four `manifest.json` inbounds: `title`, `subTitle`, `icon` for the tiles; tidier
+  `appDescription` texts in the apps' i18n files.
+- In Work Zone (not in git): the four apps in My Content, group "Certification Manager",
+  role Everyone, site "Certification Manager". Each tile opens the right app.
+- In progress: inside the launchpad the apps fail with "Could not load metadata: 500",
+  and no request reaches the server: the data source `uri` starts with `/`. Fix: a
+  relative `uri` (`odata/v4/...`) plus a `backend` proxy for `/odata` in `ui5.yaml` so
+  `cds watch` keeps working. Done and tested on the laptop for Certifications only.
+- `docs/checks-pending.md`: checks still to do in the cloud, with how to debug them.
+
+## 29 Oct 2026: step 16 (deployment)
+
 Branch `story/first-login` (from `main`). Step 16: employee record on first login. Typed
 by Ranjan with Claude explaining; rules in `docs/context.md` ("Decided 28 Oct").
 

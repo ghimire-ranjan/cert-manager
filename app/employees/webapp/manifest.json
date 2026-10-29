@@ -30,6 +30,9 @@
         "employees-display": {
           "semanticObject": "employees",
           "action": "display",
+          "title": "{{appTitle}}",
+          "subTitle": "{{appDescription}}",
+          "icon": "sap-icon://employee",
           "signature": {
             "parameters": {},
             "additionalParameters": "allowed"

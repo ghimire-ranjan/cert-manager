@@ -185,5 +185,10 @@ resources:
     parameters:
       service: destination
       service-plan: lite
+      # Our destinations live on this instance (module cert-manager-destinations), so Work
+      # Zone and the managed app router only use them with this flag (SAP: "Running
+      # Deployed HTML5 App" troubleshooting)
+      config:
+        HTML5Runtime_enabled: true
     requires:
       - name: srv-api

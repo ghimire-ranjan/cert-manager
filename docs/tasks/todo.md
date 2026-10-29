@@ -83,6 +83,12 @@ down ("Next steps", by step number).
       `npm ci` inside its npm workspace, which resets the shared `node_modules` to that
       app's tools. Until fixed: run `npm install` after `mbt build` if `cds watch` says
       "Cannot find module '@sap/cds'"
+- [x] **Database decided 29 Oct: keep our own free HANA** (`cert-manager-hana`). Looked at
+      Sandpit's other HANA instances in HANA Cloud Central: `hana1` (paid, Test and
+      Development, stopped by its owners) and `NIMS_DB` (paid, running, another team's).
+      Using another team's database would make cert-manager depend on them. Morning start
+      stays (see `docs/checks-pending.md`). Revisit if cert-manager becomes a real team
+      tool (ask for an always-on database then)
 - [ ] Before any real use: move `cert.manager-Employees.csv` and
       `cert.manager-EmployeeCertifications.csv` from `db/data` to `test/data` (laptop
       only), with `git mv`
@@ -524,7 +530,8 @@ explains. Size: open question for the architect.
       login not taken over (and Dan untouched); user without attributes; admin created on
       first admin request; 6 parallel first requests → exactly 1 record; the new user can
       create a plan; existing users unchanged
-- [ ] Deploy and try with a colleague who has never logged in
+- [ ] Deploy and try with a colleague who has never logged in: moved to
+      `docs/checks-pending.md` (checks 1-3), with what to look for and how to debug
 
 ### Step 14: SAP exam search (design agreed 22 Oct, not started)
 
