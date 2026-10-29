@@ -173,6 +173,23 @@ login name. Adding an employee in the app does **not** create a login: logins ar
 mocked users in `package.json` now, and the company login (XSUAA) after deployment.
 A new employee can log in only once a login with the same name exists.
 
+**Decided 28 Oct (design in progress): the employee record is created on first login.**
+Everyone who uses the app is an employee, admins included. A person who has been given
+access (role collection "CertManager Employee" or "CertManager Admin") but has no
+employee record yet gets one automatically, from their company login (name, e-mail,
+login ID); nobody types login IDs by hand. The role assignment is the approval.
+If an admin already created the person's record, it is found by **e-mail** and linked
+(its Login is filled in), so details like the manager are kept. An admin prepares a
+person by entering name, e-mail and manager and **leaving Login empty**: an empty Login
+means "not linked yet / hasn't logged in yet" (Login is optional since 29 Oct). Only
+such records are linked; a record that already has a Login is never taken over. One employee per e-mail
+(e-mail is unique, like Login). An e-mail that already belongs to a different, linked
+login is never taken over. A record created this way has **no manager**: only the admin
+knows who reports to whom, so the admin sets it in the Employees app (filter: Manager
+empty). Until then only admins see that person's records. An existing record is never
+changed back by a login: someone set to Active off stays inactive. Access is decided
+only by the role collection, so to lock someone out, remove it.
+
 **Adding a new employee in the cloud (agreed 23 Oct) takes two steps, in any order:**
 (1) in the BTP cockpit, give them the role collection "CertManager Employee" (or
 "CertManager Admin"); (2) in the Employees app, create their record with `userID` = their

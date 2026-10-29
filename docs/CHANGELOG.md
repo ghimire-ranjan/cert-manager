@@ -10,6 +10,22 @@ step, and start a new empty Unreleased section on top.
 
 ## Unreleased
 
+Branch `story/first-login` (from `main`). Step 16: employee record on first login. Typed
+by Ranjan with Claude explaining; rules in `docs/context.md` ("Decided 28 Oct").
+
+- `db/schema.cds`: e-mail unique (one employee per e-mail); Login (`userID`) optional,
+  empty = "not linked yet" (an admin prepares a person with name, e-mail and manager).
+- `srv/admin-service.js` `checkEmployee`: readable 400 for a duplicate e-mail; the
+  duplicate-login check now only runs when a Login is entered (otherwise two empty
+  Logins would clash).
+- New `srv/lib/first-login.js` (`addFirstLogin`), registered first in CertService and
+  AdminService: on each request, find the person by login ID; else link a prepared
+  record (same e-mail, empty Login), keeping its manager; else create one from the
+  company login (name, e-mail), without a manager. Existing records are never changed.
+- Tested on the laptop with made-up users (see `docs/tasks/todo.md`, step 16).
+
+## 28 Oct 2026: employee check (deployment)
+
 Branch `deployment` (from `main`).
 
 - (27 Oct, written by Claude at Ranjan's request) `srv/cert-service.js`: `before CREATE`

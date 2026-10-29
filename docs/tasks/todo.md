@@ -46,7 +46,11 @@ down ("Next steps", by step number).
       space and Ranjan lacks "SAP HANA Cloud Administrator", so Claude created our **own
       free HANA** `cert-manager-hana` (`hana-cloud` / `hana-free`, 16 GB, generated
       password, Cloud Foundry IPs only) in space `Cert-manager`. **It stops every night**;
-      start it before use. Checked: server runs on HANA with XSUAA, tables deployed (task
+      start it before use. Sign: the apps say "Internal Server Error" and the server log
+      says "Pool resource could not be acquired". To start it: a file `hana-start.json`
+      with `{"data":{"serviceStopped":false}}` (outside the project), then
+      `cf update-service cert-manager-hana -c hana-start.json` and wait about 4 minutes
+      until `cf service cert-manager-hana` says "update succeeded". Checked: server runs on HANA with XSUAA, tables deployed (task
       SUCCEEDED), everything 401 without login, mocked `chris:chris` refused.
 - [x] `cds add workzone` (destination service, `sap.cloud` service `certmanager.service`);
       fixed its mistake: all four apps had the same inbound `employees-display`, now
@@ -493,6 +497,34 @@ app, round 1, round 2): open question for the architect.
 
 **Order:** Catalogue app -> deploy round 1 -> deploy round 2 (AI) -> step 14 (SAP exam
 search) -> step 15 (SAP exam agent).
+
+### Step 16: employee record on first login (design agreed 28 Oct, not started)
+
+Why: in the cloud, logins are IDs like `0a41fa04-…`; admins can't be expected to type
+them. Rules are in `docs/context.md` ("Decided 28 Oct"). Ranjan writes the code, Claude
+explains. Size: open question for the architect.
+
+- [ ] Check first: which name / e-mail fields CAP gets from the company login token in
+      the cloud (and how they look in `req.user`)
+- [x] `db/schema.cds`: e-mail unique (`@assert.unique`), plus a readable duplicate-e-mail
+      check next to the duplicate-login check in `srv/admin-service.js` (29 Oct, typed by
+      Ranjan; tested: duplicate 400 on the E-mail field, empty e-mails allowed)
+- [x] Login optional (`userID` no longer `@mandatory`; empty = not linked yet, decided 29
+      Oct); duplicate-login check only when a Login is entered (29 Oct, typed by Ranjan;
+      tested: two empty Logins OK, duplicate Login 400)
+- [x] `srv/lib/first-login.js` (`addFirstLogin`, typed by Ranjan 29 Oct), registered
+      first in `init()` of CertService and AdminService: find by login ID → else a
+      prepared record with the same e-mail and empty Login → link; else create (name,
+      e-mail, login ID, Active on, no manager). Never changes an existing record. Reads
+      the `cert.manager.Employees` table directly (no `@restrict`); `try/catch` for
+      parallel first requests
+- [x] Laptop: mocked users without e-mail get name = login, no e-mail
+- [x] Tests (29 Oct, laptop, made-up users via `CDS_CONFIG`): new user created with name
+      and e-mail; prepared record linked by e-mail with manager kept; e-mail of another
+      login not taken over (and Dan untouched); user without attributes; admin created on
+      first admin request; 6 parallel first requests → exactly 1 record; the new user can
+      create a plan; existing users unchanged
+- [ ] Deploy and try with a colleague who has never logged in
 
 ### Step 14: SAP exam search (design agreed 22 Oct, not started)
 

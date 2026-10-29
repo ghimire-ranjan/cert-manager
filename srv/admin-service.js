@@ -1,8 +1,15 @@
 const cds = require("@sap/cds");
 const { addExpiryFields } = require("./lib/expiry-fields.js");
+const { addFirstLogin } = require("./lib/first-login.js");
 
 // Move one record from an allowed status to a new one (used by all approve / reject / revoke)
-async function changeStatus(req, EmployeeCertifications, ID, oldStatus, newStatus) {
+async function changeStatus(
+  req,
+  EmployeeCertifications,
+  ID,
+  oldStatus,
+  newStatus,
+) {
   const record = await SELECT.one.from(EmployeeCertifications, ID);
   if (!record) return req.error(404, "Record not found");
   if (!oldStatus.includes(record.status_code)) {
@@ -20,22 +27,43 @@ async function changeStatus(req, EmployeeCertifications, ID, oldStatus, newStatu
 // (The database also blocks a duplicate userID, but only with a technical 500 error.)
 async function checkEmployee(req, Employees) {
   // On UPDATE, req.data holds only the changed fields, so merge with the stored record
-  const stored = req.event === "UPDATE" ? await SELECT.one.from(req.subject) : {};
+  const stored =
+    req.event === "UPDATE" ? await SELECT.one.from(req.subject) : {};
   const employee = { ...stored, ...req.data };
 
   if (employee.manager_ID && employee.manager_ID === employee.ID) {
-    return req.error(400, "An employee can't be their own manager", "manager_ID");
-  }
-
-  const sameLogin = await SELECT.one
-    .from(Employees)
-    .where({ userID: employee.userID, ID: { "!=": employee.ID } });
-  if (sameLogin) {
     return req.error(
       400,
-      `Login '${employee.userID}' is already used by ${sameLogin.name}`,
-      "userID",
+      "An employee can't be their own manager",
+      "manager_ID",
     );
+  }
+
+  if (employee.userID) {
+    const sameLogin = await SELECT.one
+      .from(Employees)
+      .where({ userID: employee.userID, ID: { "!=": employee.ID } });
+    if (sameLogin) {
+      return req.error(
+        400,
+        `Login '${employee.userID}' is already used by ${sameLogin.name}`,
+        "userID",
+      );
+    }
+  }
+
+  // E-mail must be unique too (a first login is linked by e-mail); empty is allowed
+  if (employee.email) {
+    const sameEmail = await SELECT.one
+      .from(Employees)
+      .where({ email: employee.email, ID: { "!=": employee.ID } });
+    if (sameEmail) {
+      return req.error(
+        400,
+        `E-mail '${employee.email}' is already used by ${sameEmail.name}`,
+        "email",
+      );
+    }
   }
 }
 
@@ -43,7 +71,8 @@ async function checkEmployee(req, Employees) {
 // (The database also blocks a duplicate code, but only with a technical 500 error.)
 async function checkCertification(req, Certifications) {
   // On UPDATE, req.data holds only the changed fields, so merge with the stored record
-  const stored = req.event === "UPDATE" ? await SELECT.one.from(req.subject) : {};
+  const stored =
+    req.event === "UPDATE" ? await SELECT.one.from(req.subject) : {};
   const exam = { ...stored, ...req.data };
 
   const sameCode = await SELECT.one
@@ -61,6 +90,8 @@ async function checkCertification(req, Certifications) {
 module.exports = class AdminService extends cds.ApplicationService {
   init() {
     const { EmployeeCertifications, Employees, Certifications } = this.entities;
+    // Make sure the logged-in person has an employee record (first login)
+    addFirstLogin(this);
 
     this.before(["CREATE", "UPDATE"], Employees, (req) =>
       checkEmployee(req, Employees),
@@ -75,15 +106,33 @@ module.exports = class AdminService extends cds.ApplicationService {
     const recordID = (req) => req.params[0].ID ?? req.params[0];
 
     this.on("approve", EmployeeCertifications, (req) =>
-      changeStatus(req, EmployeeCertifications, recordID(req), ["Pending"], "Verified"),
+      changeStatus(
+        req,
+        EmployeeCertifications,
+        recordID(req),
+        ["Pending"],
+        "Verified",
+      ),
     );
 
     this.on("reject", EmployeeCertifications, (req) =>
-      changeStatus(req, EmployeeCertifications, recordID(req), ["Pending"], "Rejected"),
+      changeStatus(
+        req,
+        EmployeeCertifications,
+        recordID(req),
+        ["Pending"],
+        "Rejected",
+      ),
     );
 
     this.on("revoke", EmployeeCertifications, (req) =>
-      changeStatus(req, EmployeeCertifications, recordID(req), ["Verified", "Rejected"], "Pending"),
+      changeStatus(
+        req,
+        EmployeeCertifications,
+        recordID(req),
+        ["Verified", "Rejected"],
+        "Pending",
+      ),
     );
 
     addExpiryFields(this, EmployeeCertifications);
@@ -97,25 +146,48 @@ module.exports = class AdminService extends cds.ApplicationService {
         status_code: { in: statuses },
       });
       if (!record) {
-        req.error(404, `No ${statuses.join(" or ")} certification ${code} for '${userID}'`);
+        req.error(
+          404,
+          `No ${statuses.join(" or ")} certification ${code} for '${userID}'`,
+        );
       }
       return record;
     };
-  
 
     this.on("approveCertification", async (req) => {
       const record = await byEmployeeAndCode(req, ["Pending"]);
-      if (record) return changeStatus(req, EmployeeCertifications, record.ID, ["Pending"], "Verified");
+      if (record)
+        return changeStatus(
+          req,
+          EmployeeCertifications,
+          record.ID,
+          ["Pending"],
+          "Verified",
+        );
     });
 
     this.on("rejectCertification", async (req) => {
       const record = await byEmployeeAndCode(req, ["Pending"]);
-      if (record) return changeStatus(req, EmployeeCertifications, record.ID, ["Pending"], "Rejected");
+      if (record)
+        return changeStatus(
+          req,
+          EmployeeCertifications,
+          record.ID,
+          ["Pending"],
+          "Rejected",
+        );
     });
 
     this.on("revokeCertification", async (req) => {
       const record = await byEmployeeAndCode(req, ["Verified", "Rejected"]);
-      if (record) return changeStatus(req, EmployeeCertifications, record.ID, ["Verified", "Rejected"], "Pending");
+      if (record)
+        return changeStatus(
+          req,
+          EmployeeCertifications,
+          record.ID,
+          ["Verified", "Rejected"],
+          "Pending",
+        );
     });
 
     return super.init();

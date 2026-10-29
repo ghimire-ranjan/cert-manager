@@ -1,6 +1,8 @@
 const cds = require("@sap/cds");
 const { addOneYear } = require("./lib/expiry.js");
 const { addExpiryFields } = require("./lib/expiry-fields.js");
+const { addFirstLogin } = require("./lib/first-login.js");
+
 
 // The set of status_codes that only admins can set
 const ADMIN_SET = ["Verified", "Rejected"];
@@ -35,6 +37,9 @@ function applyRules(req, data, stored) {
 module.exports = class CertService extends cds.ApplicationService {
   init() {
     const { EmployeeCertifications, Employees } = this.entities;
+        // Make sure the logged-in person has an employee record (first login)
+    addFirstLogin(this);
+
 
     // New draft: fill in the logged-in employee straight away
     this.before("NEW", EmployeeCertifications.drafts, async (req) => {

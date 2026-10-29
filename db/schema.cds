@@ -20,8 +20,9 @@ entity Certifications : cuid, managed {
 
 // userID is the login name, so no two employees may share it
 @assert.unique: {userID: [userID]}
+@assert.unique: {email: [email]}
 entity Employees : cuid, managed {
-    userID         : String(50)  @mandatory;
+    userID         : String(50)  ;
     name           : String(100) @mandatory;
     email          : String(100);
     active         : Boolean default true;
